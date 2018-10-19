@@ -7,9 +7,9 @@
            
             "label": "build driver",
             "type": "shell",
-            "command": "g++-8",
+            "command": "g++",
             "args": [
-                "-g", "tcpUserSocket.cpp", "tcpServerSocket.cpp", "driver.cpp", "-pthread", "-o", "driver.out", "&&", "./driver.out"
+                "-g","CommandLookup.cpp", "tcpUserSocket.cpp", "tcpServerSocket.cpp", "driver.cpp",  "-pthread", "-o", "driver.out", "&&", "./driver.out"
             ],
             "group": {
                 "kind": "build",

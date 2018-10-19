@@ -6,6 +6,7 @@
 #include <memory> 
 #include "tcpUserSocket.h"
 #include "tcpServerSocket.h"
+#include "CommandLookup.h"
 
 using namespace std;
 
@@ -30,6 +31,10 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
         //thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
         //thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
         
+        CommandLookup cl;
+        cl.execute(msg);
+
+
         childT1.join();
         //childT2.join(); 
         //childT3.join(); 
