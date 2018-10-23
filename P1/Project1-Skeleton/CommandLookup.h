@@ -6,10 +6,15 @@ using std::map;
 using std::make_pair;
 #include <string>
 using std::string;
+using std::to_string;
+#include <sstream>
+using std::istringstream;
 #include <iostream>
 using std::cout;
 using std::cerr;
 using std::endl;
+#include <vector>
+using std::vector;
 
 enum Command {AWAY, CONNECT, DIE, HELP,
                 INFO, INVITE, ISON, JOIN,
@@ -29,14 +34,17 @@ public:
     CommandLookup(){initializeMap();}
 
     void initializeMap();
+    vector<string> parseArguments(string& args);
     int execute(string& command);
-    int usage();
+    int usage(int code);
+
+    void printVector(vector<string>& v);
 
 private:
     
     CommandMap command_map;
 
-    void quit();
+    void quit(vector<string>& args);
 
 
 };
