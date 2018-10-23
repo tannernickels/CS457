@@ -10,4 +10,5 @@ namespace cs457
           assert(multiple && ((multiple & (multiple - 1)) == 0));
           return (numToRound + multiple - 1) & -multiple;
     }
+
 }

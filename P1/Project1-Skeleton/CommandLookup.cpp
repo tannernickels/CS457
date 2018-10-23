@@ -39,13 +39,34 @@ void CommandLookup::initializeMap(){
     command_map.insert(make_pair("/whois", WHOIS));
 }
 
+vector<string> CommandLookup::parseArguments(string& args){
+    istringstream iss(args);
+    vector<string> arguments;
+    do{
+        string buf;
+        iss >> buf;
+        if(buf.size()>0){
+            arguments.push_back(buf);
+        }
+    }while(iss);
+
+    return arguments;
+
+}
+
 int CommandLookup::execute(string& command){
     
-    Command c = command_map[command.substr(0, command.length()-2)];
-    cout << command_map.size() << endl;
+    //Grab individual arguments from the msg string and store in a vector
+    vector<string> args = parseArguments(command);
+    printVector(args);
+    //Grab the command enum using the first argument, then remove it from the vector
+    Command c = command_map[args[0]];
+    args.erase(args.begin());
+
+
     switch(c){
         case QUIT:
-            quit();
+            quit(args);
             break;
         default:
             cout << "NOT FOUND" << endl;
@@ -53,10 +74,40 @@ int CommandLookup::execute(string& command){
     }
 }
 
-int CommandLookup::usage(){
-    return -1;
+int CommandLookup::usage(int code){
+    string u = "USAGE(" + to_string(code) + "): ";
+    switch(code){
+        case -1:
+            cout << u << "incorrect number of arguments" << endl;
+            return code;
+        case -2:
+            cout << u << "incorrect argument error" << endl;
+        default:
+            return code;
+    }
 }
 
-void CommandLookup::quit(){
-    exit(-1);
+void CommandLookup::printVector(vector<string>& v){
+    for(auto& arg : v){ 
+        cout << "|" << arg << "|" << endl;
+    }
+
+}
+
+void CommandLookup::quit(vector<string>& args){
+    if(args.size()==0){
+        exit(-1);
+    }else{
+        string message = "";
+        for (auto& word : args){
+            if(args[0][0]!='"'){
+                cout << "QUIT: message must be encased in quotations:\ne.x. \"This is a message\"" << endl;
+                usage(-2);
+                return;
+            }
+            message += word + " ";
+        }
+        cout << message << endl;
+        exit(-1);
+    }
 }
