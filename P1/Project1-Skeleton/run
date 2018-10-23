@@ -1,0 +1,3 @@
+#!/bin/bash
+
+g++ -g CommandLookup.cpp tcpUserSocket.cpp tcpServerSocket.cpp driver.cpp -pthread -o driver.out && ./driver.out

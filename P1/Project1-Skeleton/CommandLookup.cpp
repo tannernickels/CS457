@@ -68,6 +68,9 @@ int CommandLookup::execute(string& command){
         case QUIT:
             quit(args);
             break;
+        case INFO:
+            info();
+            break;
         default:
             cout << "NOT FOUND" << endl;
 
@@ -110,4 +113,9 @@ void CommandLookup::quit(vector<string>& args){
         cout << message << endl;
         exit(-1);
     }
+}
+
+void CommandLookup::info(){
+    // NEED A WAY TO SEND MESSAGE BACK TO CLIENT
+    //cout << "this IRC server is made possible by YUNG T and BIG DEV" << endl;
 }

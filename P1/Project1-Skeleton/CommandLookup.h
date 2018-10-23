@@ -45,7 +45,7 @@ private:
     CommandMap command_map;
 
     void quit(vector<string>& args);
-
+    void info();
 
 };
 
