@@ -15,16 +15,8 @@ using std::cerr;
 using std::endl;
 #include <vector>
 using std::vector;
+#include "cmds.h"
 
-enum Command {AWAY, CONNECT, DIE, HELP,
-                INFO, INVITE, ISON, JOIN,
-                KICK, KILL, KNOCK, LIST,
-                MODE, NICK, NOTICE, OPER,
-                PART, PASS, PING, PONG,
-                PRIVMSG, QUIT=2, RESTART, RULES,
-                SETNAME, SILENCE, TIME, TOPIC,
-                USER, USERHOST, USERIP, USERS,
-                VERSION, WALLOPS, WHO, WHOIS};
 typedef map<string, Command> CommandMap;
 
 class CommandLookup{
@@ -37,7 +29,7 @@ public:
     vector<string> parseArguments(string& args);
     int execute(string& command);
     int usage(int code);
-
+    int find(string& command);
     void printVector(vector<string>& v);
 
 private:
