@@ -60,6 +60,7 @@ int CommandLookup::execute(string& command){
     vector<string> args = parseArguments(command);
 
     //Grab the command enum using the first argument, then remove it from the vector
+    to_lowercase(args[0]);
     Command c = command_map[args[0]];
     args.erase(args.begin());
 
@@ -121,14 +122,23 @@ void CommandLookup::info(){
 
 
 // returns enum of command
-int CommandLookup::find(string& command){
+Command CommandLookup::find(string& command){
     //Grab individual arguments from the msg string and store in a vector
     vector<string> args = parseArguments(command);
     //Grab the command enum using the first argument, then remove it from the vector
+    to_lowercase(args[0]);
     Command cmd = command_map[args[0]];
     if(cmd == 0 && args[0] != "/away")
-        return -1; // return -1 if the command was invalid
+        return INVALID; // return INVALID if the command was invalid
 
     args.erase(args.begin());
     return cmd;
+}
+
+void CommandLookup::to_lowercase(string& s){
+    for (int i = 0; i < s.size(); i++){
+        s[i] = tolower(s[i]);
+    }
+    return;
+
 }

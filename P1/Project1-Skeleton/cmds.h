@@ -10,6 +10,7 @@ enum Command {AWAY, CONNECT, DIE, HELP,
                 PRIVMSG, QUIT, RESTART, RULES,
                 SETNAME, SILENCE, TIME, TOPIC,
                 USER, USERHOST, USERIP, USERS,
-                VERSION, WALLOPS, WHO, WHOIS};
+                VERSION, WALLOPS, WHO, WHOIS, INVALID};
+
 
 #endif

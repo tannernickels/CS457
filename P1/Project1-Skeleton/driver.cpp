@@ -14,10 +14,10 @@ using namespace std;
 bool ready = true;
 //vector<unique_ptr<thread>> threadList; 
 
-void messageHandler(string msg){
+void messageHandler(string& msg){
      if(msg.at(0) == '/'){
         CommandLookup cl;
-        int command = cl.find(msg);
+        Command command = cl.find(msg);
         chatUser user;
         user.onEvent(command, msg);
     }
