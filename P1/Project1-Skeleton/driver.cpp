@@ -48,14 +48,14 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
 
         // WHY ARE WE USING THREADS HERE?? why not use -- clientSocket.get()->sendString(s);
         thread childT1(&cs457::tcpUserSocket::sendString,clientSocket.get(),s,true);
-        //thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
-        //thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
+        thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
+        thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
         
         messageHandler(msg);
        
         childT1.join();
-        //childT2.join(); 
-        //childT3.join(); 
+        childT2.join(); 
+        childT3.join(); 
         //clientSocket.get()->sendString(msg); 
         //clientSocket.get()->sendString("\n"); 
         if (msg.substr(0,6) == "SERVER")

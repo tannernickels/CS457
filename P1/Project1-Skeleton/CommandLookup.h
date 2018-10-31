@@ -17,6 +17,18 @@ using std::endl;
 using std::vector;
 #include "cmds.h"
 
+<<<<<<< HEAD
+enum Command {AWAY, CONNECT, DIE, HELP,
+                INFO, INVITE, ISON, JOIN,
+                KICK, KILL, KNOCK, LIST,
+                MODE, NICK, NOTICE, OPER,
+                PART, PASS, PING, PONG,
+                PRIVMSG, QUIT, RESTART, RULES,
+                SETNAME, SILENCE, TIME, TOPIC,
+                USER, USERHOST, USERIP, USERS,
+                VERSION, WALLOPS, WHO, WHOIS};
+=======
+>>>>>>> 576279f193904b95319ec6bc757bb8f4d18f9f91
 typedef map<string, Command> CommandMap;
 
 class CommandLookup{

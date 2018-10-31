@@ -58,11 +58,10 @@ int CommandLookup::execute(string& command){
     
     //Grab individual arguments from the msg string and store in a vector
     vector<string> args = parseArguments(command);
-    printVector(args);
+
     //Grab the command enum using the first argument, then remove it from the vector
     Command c = command_map[args[0]];
     args.erase(args.begin());
-
 
     switch(c){
         case QUIT:
@@ -103,7 +102,7 @@ void CommandLookup::quit(vector<string>& args){
     }else{
         string message = "";
         for (auto& word : args){
-            if(args[0][0]!='"'){
+            if(args[0][0]!='\"'){
                 cout << "QUIT: message must be encased in quotations:\ne.x. \"This is a message\"" << endl;
                 usage(-2);
                 return;
