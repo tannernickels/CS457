@@ -28,16 +28,16 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
         cout << "[SERVER] The client is sending message " << msg << " -- With value return = " << val << endl;
         string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
         thread childT1(&cs457::tcpUserSocket::sendString,clientSocket.get(),s,true);
-        //thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
-        //thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
+        thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
+        thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
         
         CommandLookup cl;
         cl.execute(msg);
 
 
         childT1.join();
-        //childT2.join(); 
-        //childT3.join(); 
+        childT2.join(); 
+        childT3.join(); 
         //clientSocket.get()->sendString(msg); 
         //clientSocket.get()->sendString("\n"); 
          if (msg.substr(0,6) == "SERVER")

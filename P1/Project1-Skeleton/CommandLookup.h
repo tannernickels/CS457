@@ -21,7 +21,7 @@ enum Command {AWAY, CONNECT, DIE, HELP,
                 KICK, KILL, KNOCK, LIST,
                 MODE, NICK, NOTICE, OPER,
                 PART, PASS, PING, PONG,
-                PRIVMSG, QUIT=2, RESTART, RULES,
+                PRIVMSG, QUIT, RESTART, RULES,
                 SETNAME, SILENCE, TIME, TOPIC,
                 USER, USERHOST, USERIP, USERS,
                 VERSION, WALLOPS, WHO, WHOIS};
