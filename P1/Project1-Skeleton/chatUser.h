@@ -17,7 +17,7 @@ class chatUser{
 public: 
 
     string nickName; 
-    void onEvent(int& cmd, string& msg);
+    void onEvent(Command cmd, string& msg);
 
 private:
 

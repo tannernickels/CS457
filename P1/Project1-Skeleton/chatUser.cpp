@@ -1,6 +1,6 @@
 #include "chatUser.h"
 
-void chatUser::onEvent(int& cmd, string& msg){
+void chatUser::onEvent(Command cmd, string& msg){
 
      switch(cmd){
         case AWAY: std::cout << "execute AWAY()" << std::endl; break;
