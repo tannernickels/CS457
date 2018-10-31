@@ -15,7 +15,9 @@ using std::cerr;
 using std::endl;
 #include <vector>
 using std::vector;
+#include "cmds.h"
 
+<<<<<<< HEAD
 enum Command {AWAY, CONNECT, DIE, HELP,
                 INFO, INVITE, ISON, JOIN,
                 KICK, KILL, KNOCK, LIST,
@@ -25,6 +27,8 @@ enum Command {AWAY, CONNECT, DIE, HELP,
                 SETNAME, SILENCE, TIME, TOPIC,
                 USER, USERHOST, USERIP, USERS,
                 VERSION, WALLOPS, WHO, WHOIS};
+=======
+>>>>>>> 576279f193904b95319ec6bc757bb8f4d18f9f91
 typedef map<string, Command> CommandMap;
 
 class CommandLookup{
@@ -37,7 +41,7 @@ public:
     vector<string> parseArguments(string& args);
     int execute(string& command);
     int usage(int code);
-
+    int find(string& command);
     void printVector(vector<string>& v);
 
 private:
@@ -45,7 +49,7 @@ private:
     CommandMap command_map;
 
     void quit(vector<string>& args);
-
+    void info();
 
 };
 
