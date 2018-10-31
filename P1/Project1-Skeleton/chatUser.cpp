@@ -39,6 +39,7 @@ void chatUser::onEvent(Command cmd, string& msg){
         case WALLOPS: std::cout << "execute WALLOPS()" << std::endl; break;
         case WHO: std::cout << "execute WHO()" << std::endl; break;
         case WHOIS: std::cout << "execute WHOIS()" << std::endl; break;
+        case INVALID: std::cout << "invalid command" << endl; break;
         default: std::cout << "ERROR IN COMMAND PROCESSING" << std::endl; break;
     }
 

@@ -129,7 +129,7 @@ Command CommandLookup::find(string& command){
     to_lowercase(args[0]);
     Command cmd = command_map[args[0]];
     if(cmd == 0 && args[0] != "/away")
-        return INVALID; // return -1 if the command was invalid
+        return INVALID; // return INVALID if the command was invalid
 
     args.erase(args.begin());
     return cmd;
