@@ -1,5 +1,10 @@
 #include "chatUser.h"
 
+void chatUser::setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket){
+    connection = clientSocket;
+    std::cout << "socket saved" << std::endl;
+}
+
 void chatUser::onEvent(Command cmd, string& msg){
 
      switch(cmd){
@@ -7,7 +12,7 @@ void chatUser::onEvent(Command cmd, string& msg){
         case CONNECT: std::cout << "execute CONNECT()" << std::endl; break;
         case DIE: std::cout << "execute DIE()" << std::endl; break;
         case HELP: std::cout << "execute HELP()" << std::endl; break;
-        case INFO: std::cout << "execute INFO()" << std::endl; break;
+        case INFO: connection.get()->sendString("this IRC server is made possible by YUNG T and BIG DEV"); break;
         case INVITE: std::cout << "execute INVITE()" << std::endl; break;
         case ISON: std::cout << "execute ISON()" << std::endl; break;
         case JOIN: std::cout << "execute JOIN()" << std::endl; break;

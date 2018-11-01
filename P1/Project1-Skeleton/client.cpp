@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <fstream>
+#include <thread>
 using namespace std;
 
 //GLOBALS
@@ -24,7 +25,11 @@ int serverPort;
 string configFile;
 string testFile;
 string logFile;
+
 int clientSd; // global client socket
+char msg[1500]; //create a message buffer 
+int bytesRead, bytesWritten = 0;
+
 
 // Creates client socket and establishes connection to server
 void configureSocketAndServerConnection(char *serverIp, int port){
@@ -48,6 +53,30 @@ void configureSocketAndServerConnection(char *serverIp, int port){
     cout << "Connected to the server!" << endl;
 }
 
+void outgoing(){
+    //cout << ">";
+        string data;
+        getline(cin, data);
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        strcpy(msg, data.c_str());
+        if(data == "EXIT")
+        {
+            send(clientSd, (char*)&msg, strlen(msg), 0);
+        }
+        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+        cout << "Awaiting server response..." << endl;
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+}
+
+void incoming(){
+    bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+    if(!strcmp(msg, "goodbye\n"))
+    {
+        cout << "Server Acknowledges Client Termination" << endl;
+        exit(-1);
+    }
+    cout << "Server: " << msg << endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -68,38 +97,31 @@ int main(int argc, char *argv[])
         }
     }
     
-    //create a message buffer 
-    char msg[1500]; 
+    
     
     char* hname = &hostname[0u];
     configureSocketAndServerConnection(hname, serverPort);
 
-    int bytesRead, bytesWritten = 0;
+   
     struct timeval start1, end1;
     gettimeofday(&start1, NULL);
 
+    
     while(true)
     {
-        cout << ">";
-        string data;
-        getline(cin, data);
-        memset(&msg, 0, sizeof(msg));//clear the buffer
-        strcpy(msg, data.c_str());
-        if(data == "EXIT")
-        {
-            send(clientSd, (char*)&msg, strlen(msg), 0);
-        }
-        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
-        cout << "Awaiting server response..." << endl;
-        memset(&msg, 0, sizeof(msg));//clear the buffer
-        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-        if(!strcmp(msg, "goodbye\n"))
-        {
-            cout << "Server Acknowledges Client Termination" << endl;
-            break;
-        }
-        cout << "Server: " << msg << endl;
+        std::thread sender(outgoing);
+        sender.join();
+        // Currently the client can only receive three messages per everyone sent -- fix(multithread)
+        std::thread receiver(incoming);
+        receiver.detach();
+        std::thread receiver2(incoming);
+        receiver2.detach();
+        std::thread receiver3(incoming);
+        receiver3.detach();
+
+        
     }
+
     gettimeofday(&end1, NULL);
     close(clientSd);
     cout << "********Session********" << endl;
