@@ -18,11 +18,12 @@ public:
 
     string nickName; 
     void onEvent(Command cmd, string& msg);
+    void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
 
 private:
 
     string password; 
-    shared_ptr<cs457::tcpUserSocket> userSocket; 
+    shared_ptr<cs457::tcpUserSocket> connection; 
     
 };
 

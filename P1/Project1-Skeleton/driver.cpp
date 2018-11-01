@@ -14,15 +14,15 @@ using namespace std;
 bool ready = true;
 //vector<unique_ptr<thread>> threadList; 
 
-void messageHandler(string& msg){
+void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> clientSocket){
      if(msg.at(0) == '/'){
         CommandLookup cl;
         Command command = cl.find(msg);
-        chatUser user;
         user.onEvent(command, msg);
     }
     else{
         cout << "message was not a command.." << endl;
+        clientSocket.get()->sendString(msg); // relay message back to client to confirm acknowledgement 
     }
 }
 
@@ -34,6 +34,8 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     string msg;
     ssize_t val;
     bool cont =true ;  
+    chatUser user; // create user object
+    user.setSocket(clientSocket);
 
     while (cont) 
     {
@@ -47,15 +49,16 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
         string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
 
         // WHY ARE WE USING THREADS HERE?? why not use -- clientSocket.get()->sendString(s);
-        thread childT1(&cs457::tcpUserSocket::sendString,clientSocket.get(),s,true);
-        thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
-        thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
+        //thread childT1(&cs457::tcpUserSocket::sendString,clientSocket.get(),s,true);
+        //thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
+        //thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
         
-        messageHandler(msg);
-       
-        childT1.join();
-        childT2.join(); 
-        childT3.join(); 
+        thread eventHandler(messageHandler, msg, user, clientSocket);
+        eventHandler.join();
+
+        //childT1.join();
+        //childT2.join(); 
+        //childT3.join(); 
         //clientSocket.get()->sendString(msg); 
         //clientSocket.get()->sendString("\n"); 
         if (msg.substr(0,6) == "SERVER")
