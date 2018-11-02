@@ -12,7 +12,10 @@
 using namespace std;
 
 bool ready = true;
-//vector<unique_ptr<thread>> threadList; 
+vector<chatUser>  activeUsers;     // vector of active user
+map <string, string> users;        // empty map container for usrs
+string uname;    
+
 
 void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> clientSocket){
      if(msg.at(0) == '/'){
@@ -35,7 +38,34 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     ssize_t val;
     bool cont =true ;  
     chatUser user; // create user object
+    activeUsers.push_back(user);  // add user to list of active users
     user.setSocket(clientSocket);
+
+    bool notAuthenticated = true;
+    while(notAuthenticated){
+        tie(msg,val) = clientSocket.get()->recvString();
+        if(msg.substr(0,3) == "-u "){ // process username
+            string username = msg.substr(3, msg.size());
+            cout << "username: " << username << endl;
+            uname = username;
+            if(users.find( username ) != users.end()){
+                clientSocket.get()->sendString("validUser");
+            }
+            else{
+                clientSocket.get()->sendString("invalidUser");
+            }
+        }
+        else{ //process password
+            cout << "pwd: " << msg << endl;
+            if(msg == users[uname]){
+                clientSocket.get()->sendString("authenticated!");
+                break;
+            }
+            else{
+                clientSocket.get()->sendString("notAuthenticated");
+            }
+        }
+    }
 
     while (cont) 
     {
@@ -95,6 +125,11 @@ int main(int argc, char * argv[])
     int id = 0; 
     vector<unique_ptr<thread>> threadList; 
   
+    // insert elements into users map -- replace with fileIO
+    users.insert(pair <string, string> ("dcdennis", "123")); 
+    users.insert(pair <string, string> ("tnickels", "456 user false")); 
+
+
     while (ready)
     { 
         shared_ptr<cs457::tcpUserSocket> clientSocket;

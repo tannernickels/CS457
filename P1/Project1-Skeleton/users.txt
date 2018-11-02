@@ -1,0 +1,5 @@
+username pwd userlevel banned
+fortega cnt4713 admin false
+dcdennis 123 user false
+tnickels 456 user false
+jtancher @ user true
