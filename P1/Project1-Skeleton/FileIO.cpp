@@ -1,22 +1,95 @@
 #include "FileIO.h"
 
-int FileIO::read(const string& filename){
+string FileIO::readFull(){
+    string buf = "";
     string current = "";
-    ifstream istr(filename);
-        if (istr.fail()) return -1;
+        if (istr.fail()) return buf;
         
-        istr >> current;
+        //istr >> current;
         //data += current;
-        while (!istr.fail()){
+        while (getline(istr, current)){
             
-            data += current + " ";
-            istr >> current;
+            buf += current + "\n";
+            //istr >> current;
             
             
         }
-        return 0;
+        return buf;
 }
 
-int FileIO::write(const string& filename, string& data){
-    return 0;
+
+string FileIO::nextLine(){
+    string line = "";
+    if(getline(istr, line)){
+        return line;
+    }
+    return "";
 }
+
+string FileIO::nextToken(){
+    string token = "";
+    if (!istr.fail()){
+        istr >> token;
+        return token;
+    }
+    return "";
+}
+
+//convert a line into its individual tokens and return them in a vector. Useful for 1st line of client test
+vector<string> FileIO::tokenizeLine(){
+    string line = nextLine();
+    istringstream iss(line);
+    vector<string> tokens;
+    do{
+        string buf;
+        iss >> buf;
+        if(buf.size()>0){
+            tokens.push_back(buf);
+        }
+    }while(iss);
+
+    return tokens;
+}
+    
+//convert a line into a key/value pair. Useful for users.txt. (username: userData).
+pair<string, string> FileIO::packageLine(){
+    string key = nextToken();
+    string value = nextLine();
+    return make_pair(key, value);
+}
+
+
+
+StringMap FileIO::getConfig(){
+    StringMap config;
+    string line = "";
+    string key, value;
+    while(!istr.fail()){
+        key = nextToken();
+        value = nextToken();
+        if(key.size()==0){
+            continue;
+        }
+        config.insert(make_pair(key, value));
+    }
+    return config;
+}
+
+void FileIO::printStringMap(StringMap& config){
+    cout << "PRINTING CONFIGURATION" << endl;
+    for(map<string, string>::iterator it = config.begin(); it!=config.end(); ++it){
+            cout << it->first << ": " << it->second << endl;
+    }
+}
+
+vector<string> FileIO::getList(){
+    string token = "";
+    vector<string> listItems;
+    while (!istr.fail()){
+        token = nextToken();
+        if(token.size()==0) continue;
+        listItems.push_back(token);
+    }
+    return listItems;
+}
+
