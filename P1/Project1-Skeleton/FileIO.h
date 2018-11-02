@@ -1,33 +1,54 @@
-#ifndef FILE_IO_INCLUDE
-#define FILE_IO_INCLUDE
+#ifndef FILE_IO_H
+#define FILE_IO_H
 
-#include <iostream>
-using std::istream;
-using std::ostream;
-using std::ios;
-using std::cout;
-using std::endl;
-#include <fstream>
-using std::ifstream;
 #include <string>
-using std::string;
-using std::to_string;
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
 
+using namespace std;
 
+typedef map<string, string> StringMap;
+
+/* Wrapper class for ifstream file reading. Provides useful methods for extracting various data formats from different files
+ *  -Constructor: accepts a filename to read from. This way, a new instance of FileIO must be created for each file to be read
+ */
 class FileIO{
-    
+
 public:
     
-    FileIO() : data(""){};
+    FileIO(string filename){openFile(filename);}
     
-    int read(const string& filename);
-    int write(const string& filename, string& data);
+    //reads an entire file into a string as is, including whitespace and newlines. useful for banner.txt
+    string readFull();
+    //reads the next line in the stream and returns it
+    string nextLine();
+    //reads the next token in the stream (split on whitespace) and returns it
+    string nextToken();
     
-    string get(){return data;};
+    //convert a line into its individual tokens and return them in a vector. Useful for 1st line of client test
+    vector<string> tokenizeLine();
     
-private: 
+    //convert a line into a key/value pair. Useful for users.txt. (username: userData).
+    pair<string, string> packageLine();
     
-    string data;
+    //returns a map containing key/value pairs read from a '.conf' file. Assumes one key/value per line
+    StringMap getConfig();
+    
+    void printStringMap(StringMap& config);
+    
+    //returns a vector of strings from a file that lists items. i.e. bannedusers.txt, channels.txt
+    vector<string> getList();
+    
+
+private:
+
+    ifstream istr;
+        
+    //opens the file in the istr. accessed by the constructor
+    inline void openFile(string& filename){istr.open(filename);}
     
 };
 
