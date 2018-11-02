@@ -1,0 +1,13 @@
+#! /bin/bash
+
+if [[ $# -ne 2 ]]
+then
+	echo "USAGE $0: takes two arguments:"
+	echo "       > hostname"
+	echo "       > username"
+	exit -1
+fi
+
+
+g++ client.cpp -pthread -o a.out && ./a.out -h $1 -u $2 -p 2000
+
