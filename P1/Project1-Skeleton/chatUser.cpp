@@ -2,7 +2,6 @@
 
 void chatUser::setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket){
     connection = clientSocket;
-    std::cout << "socket saved" << std::endl;
 }
 
 void chatUser::onEvent(Command cmd, string& msg){
@@ -12,7 +11,8 @@ void chatUser::onEvent(Command cmd, string& msg){
         case CONNECT: std::cout << "execute CONNECT()" << std::endl; break;
         case DIE: std::cout << "execute DIE()" << std::endl; break;
         case HELP: std::cout << "execute HELP()" << std::endl; break;
-        case INFO: connection.get()->sendString("this IRC server is made possible by YUNG T and BIG DEV"); break;
+        case INFO:  connection.get()->sendString("this IRC server is made possible by YUNG T and BIG DEV"); 
+                    break;
         case INVITE: std::cout << "execute INVITE()" << std::endl; break;
         case ISON: std::cout << "execute ISON()" << std::endl; break;
         case JOIN: std::cout << "execute JOIN()" << std::endl; break;
@@ -21,7 +21,10 @@ void chatUser::onEvent(Command cmd, string& msg){
         case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
         case LIST: std::cout << "execute LIST()" << std::endl; break;
         case MODE: std::cout << "execute MODE()" << std::endl; break;
-        case NICK: std::cout << "execute NICK()" << std::endl; break;
+        case NICK:  std::cout << "execute NICK()" << std::endl; 
+                    nickName = msg.substr(6,msg.size());
+                    cout << "upadated nickName: " << nickName <<endl; 
+                    break;
         case NOTICE: std::cout << "execute NOTICE()" << std::endl; break;
         case OPER: std::cout << "execute OPER()" << std::endl; break;
         case PART: std::cout << "execute PART()" << std::endl; break;

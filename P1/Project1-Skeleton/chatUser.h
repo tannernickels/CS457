@@ -22,6 +22,7 @@ public:
 
 private:
 
+    string username;
     string password; 
     shared_ptr<cs457::tcpUserSocket> connection; 
     

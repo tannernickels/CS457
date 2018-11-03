@@ -82,7 +82,7 @@ void outgoing(){
 void incoming(){
     while(isRunning){
         bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-        if(!strcmp(msg, "goodbye\n"))
+        if(!strcmp(msg, "goodbye\n") || !strcmp(msg, "GOODBYE EVERYONE"))
         {
             cout << "Server Acknowledges Client Termination" << endl;
             isRunning = false;
@@ -91,6 +91,16 @@ void incoming(){
             cout << "Server: " << msg << endl;
         }
     }
+}
+
+void displayBanner(){
+    int i = 0;
+    while(i < 6){
+        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+        cout << msg << endl;
+        i++;
+    }
+    cout << endl;
 }
 
 // Login Thread Functionality
@@ -128,7 +138,8 @@ void auth(){
         bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
         if(!strcmp(msg, "authenticated!"))
         {
-            cout << "\nLOGIN SUCCESSFUL: Welcome "<< username << "\n" << endl;
+            cout << "\nLOGIN SUCCESSFUL" << endl;
+            displayBanner();
             break;
         }
         else if(!strcmp(msg, "notAuthenticated")){

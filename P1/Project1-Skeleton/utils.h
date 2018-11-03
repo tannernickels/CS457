@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string> 
 
 namespace cs457
 {
@@ -9,6 +10,10 @@ namespace cs457
         //positive only 
           assert(multiple && ((multiple & (multiple - 1)) == 0));
           return (numToRound + multiple - 1) & -multiple;
+    }
+
+    string getPwd(string userData){
+        return userData.substr(0, userData.find(' '));
     }
 
 }
