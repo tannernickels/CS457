@@ -42,7 +42,11 @@ public:
     //returns a vector of strings from a file that lists items. i.e. bannedusers.txt, channels.txt
     vector<string> getList();
     
+    //returns a vector of strings where every element is an entire line from the provided file
+    vector<string> getEveryLine();
 
+    map<string, string> readUsersTXT();
+    
 private:
 
     ifstream istr;

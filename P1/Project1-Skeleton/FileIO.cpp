@@ -58,8 +58,6 @@ pair<string, string> FileIO::packageLine(){
     return make_pair(key, value);
 }
 
-
-
 StringMap FileIO::getConfig(){
     StringMap config;
     string line = "";
@@ -93,3 +91,24 @@ vector<string> FileIO::getList(){
     return listItems;
 }
 
+vector<string> FileIO::getEveryLine(){
+    string line;
+    vector<string> list;
+    while(!istr.fail()){
+        line = nextLine();
+        if(line.size() == 0) continue;
+        list.push_back(line);
+    }
+    return list;
+}
+
+map<string, string> FileIO::readUsersTXT(){
+    map<string, string> data;
+    while(!istr.fail()){
+        pair<string, string> userinfo = packageLine();
+        if(userinfo.first.empty() || userinfo.second.empty()) continue;
+        userinfo.second = userinfo.second.substr(1); // strip white space delimeter
+        data.insert(userinfo);
+    }
+    return data;
+}

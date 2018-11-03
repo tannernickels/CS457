@@ -8,15 +8,22 @@
 #include "tcpServerSocket.h"
 #include "CommandLookup.h"
 #include "chatUser.h"
+#include "FileIO.h"
 
 using namespace std;
 
-bool ready = true;
+/* SERVER DATA */
 vector<chatUser>  activeUsers;     // vector of active user
 map <string, string> users;        // empty map container for usrs
-string uname;    
+vector<string> banner; // made this a vector of strings cuz im extra
+//string banner;
 
 
+//GLOBALS
+bool ready = true;
+string uname;    //MOVE THIS INTO USER OBJ
+
+// EventHandler Thread Functionality -- handles messages sent from a particular user/client
 void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> clientSocket){
      if(msg.at(0) == '/'){
         CommandLookup cl;
@@ -30,6 +37,50 @@ void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> 
 }
 
 
+// Authenticator Thread Functionality
+void authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket, int id){
+    bool notAuthenticated = true;
+    string msg;
+    ssize_t val;
+    cout << "Authenticating Client " << id << endl;
+   
+    while(notAuthenticated){
+        tie(msg,val) = clientSocket.get()->recvString();
+        if(msg.substr(0,3) == "-u "){ // process username
+            string username = msg.substr(3, msg.size());
+            cout << "username[ " << username;
+            uname = username;
+            if(users.find( username ) != users.end()){
+                cout << " ] is valid" << endl;
+                clientSocket.get()->sendString("validUser");
+            }
+            else{
+                cout << " ] is invalid" << endl;
+                clientSocket.get()->sendString("invalidUser");
+            }
+        }
+        else{ //process password
+            cout << "pwd[ " << msg;
+            /* password is correct */
+            if(msg == users[uname].substr(0, users[uname].find(' '))){
+                cout << " ] is correct" << endl;
+                clientSocket.get()->sendString("authenticated!");
+                // send banner
+                for(auto const& value: banner) {
+                    clientSocket.get()->sendString(value);
+                }
+                break;
+            }
+            /* password is incorrect */
+            else{
+                cout << " ] is incorrect" << endl;
+                clientSocket.get()->sendString("notAuthenticated");
+            }
+        }
+    }
+    cout << "[Client " << id<< "]: " << uname << " was successfully authenticated\n" << endl;
+}
+
 int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
 {
     cout << "Client " << id << " Unique Socket ID: " << clientSocket.get()->getUniqueIdentifier() << endl;
@@ -41,56 +92,23 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     activeUsers.push_back(user);  // add user to list of active users
     user.setSocket(clientSocket);
 
-    bool notAuthenticated = true;
-    while(notAuthenticated){
-        tie(msg,val) = clientSocket.get()->recvString();
-        if(msg.substr(0,3) == "-u "){ // process username
-            string username = msg.substr(3, msg.size());
-            cout << "username: " << username << endl;
-            uname = username;
-            if(users.find( username ) != users.end()){
-                clientSocket.get()->sendString("validUser");
-            }
-            else{
-                clientSocket.get()->sendString("invalidUser");
-            }
-        }
-        else{ //process password
-            cout << "pwd: " << msg << endl;
-            if(msg == users[uname]){
-                clientSocket.get()->sendString("authenticated!");
-                break;
-            }
-            else{
-                clientSocket.get()->sendString("notAuthenticated");
-            }
-        }
-    }
+    thread authenticator(authenticateUser, clientSocket, id);
+    authenticator.join();
 
     while (cont) 
     {
         tie(msg,val) = clientSocket.get()->recvString();
-        if (msg.substr(0,4) == "EXIT"){
+        if (msg.substr(0,4) == "EXIT"){ // replace for /QUIT functionality
             cout << "[Client " << id << "] exits chat server" << endl;
             cont = false; 
             break;
         }
         cout << "[Client "<< id <<"] " << msg << "     (value return = " << val << ")" << endl;
         string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
-
-        // WHY ARE WE USING THREADS HERE?? why not use -- clientSocket.get()->sendString(s);
-        //thread childT1(&cs457::tcpUserSocket::sendString,clientSocket.get(),s,true);
-        //thread childT2(&cs457::tcpUserSocket::sendString,clientSocket.get(),msg,true);
-        //thread childT3(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",true);
         
         thread eventHandler(messageHandler, msg, user, clientSocket);
         eventHandler.join();
 
-        //childT1.join();
-        //childT2.join(); 
-        //childT3.join(); 
-        //clientSocket.get()->sendString(msg); 
-        //clientSocket.get()->sendString("\n"); 
         if (msg.substr(0,6) == "SERVER")
         {
             thread childTExit(&cs457::tcpUserSocket::sendString,clientSocket.get(),"GOODBYE EVERYONE",false);
@@ -113,8 +131,19 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     return 1; 
 }
 
+// TODO: add server shell functionality
+void startShell(){
+    while(true){
+        string data;
+        getline(cin, data);
+        cout << "[Server] " << data << endl;
+    }
+}
+
 int main(int argc, char * argv[])
 {
+    thread interactiveServer(startShell);
+
     cout << "Initializing Socket" << std::endl; 
     cs457::tcpServerSocket mysocket(2000);
     cout << "Binding Socket" << std::endl; 
@@ -126,8 +155,16 @@ int main(int argc, char * argv[])
     vector<unique_ptr<thread>> threadList; 
   
     // insert elements into users map -- replace with fileIO
-    users.insert(pair <string, string> ("dcdennis", "123")); 
-    users.insert(pair <string, string> ("tnickels", "456 user false")); 
+    //users.insert(pair <string, string> ("dcdennis", "123")); 
+    //users.insert(pair <string, string> ("tnickels", "456 user false")); 
+    
+    // USERS IO
+    FileIO usersTXT("db/users.txt");
+    users = usersTXT.readUsersTXT();
+    // BANNER IO
+    FileIO bannerTxt("db/banner.txt");
+    banner = bannerTxt.getEveryLine();
+    
 
 
     while (ready)
@@ -141,10 +178,7 @@ int main(int argc, char * argv[])
         threadList.push_back(std::move(t)); 
         
         id++; //not the best way to go about it. 
-       // threadList.push_back(t); 
-       
-    
-        
+       // threadList.push_back(t);    
     }
 
     for (auto& t: threadList)
