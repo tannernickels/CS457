@@ -94,12 +94,8 @@ void incoming(){
 }
 
 void displayBanner(){
-    int i = 0;
-    while(i < 6){
-        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-        cout << msg << endl;
-        i++;
-    }
+    bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+    cout << msg << endl;
     cout << endl;
 }
 

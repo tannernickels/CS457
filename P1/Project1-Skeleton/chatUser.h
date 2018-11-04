@@ -16,14 +16,20 @@ class chatUser{
 
 public: 
 
+    chatUser(string& user, shared_ptr<cs457::tcpUserSocket> clientSocket) : username(user), connection(clientSocket){}
+    chatUser(){}
     string nickName; 
     void onEvent(Command cmd, string& msg);
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
 
+    inline const string& getUsername(){return this -> username;}
+
+
+
+
 private:
 
     string username;
-    string password; 
     shared_ptr<cs457::tcpUserSocket> connection; 
     
 };
