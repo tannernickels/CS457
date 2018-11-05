@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ client.cpp -pthread -o a.out && ./a.out -h 127.0.0.1 -u dcdennis -p 2000
+g++ client.cpp -pthread -o client.out && ./client.out -h 127.0.0.1 -u dcdennis -p 2000

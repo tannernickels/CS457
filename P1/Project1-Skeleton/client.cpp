@@ -63,7 +63,7 @@ void configureSocketAndServerConnection(char *serverIp, int port){
 void outgoing(){
     while(isRunning){
         sleep(1);
-        cout << ">";
+        cout << username << ">";
         string data;
         getline(cin, data);
         memset(&msg, 0, sizeof(msg));//clear the buffer
@@ -94,12 +94,8 @@ void incoming(){
 }
 
 void displayBanner(){
-    int i = 0;
-    while(i < 6){
-        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-        cout << msg << endl;
-        i++;
-    }
+    bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+    cout << msg << endl;
     cout << endl;
 }
 
@@ -191,11 +187,11 @@ int main(int argc, char *argv[])
 
     // BLOCKING CALL until client has "EXIT" process
     while(isRunning){}  
-
+    
     // CLEAN UP CLIENT SESSION 
     for (auto& t: threadList)
     {
-        t.get()->detach(); 
+        t.get()-> detach(); 
     }
 
     // Print session statistics

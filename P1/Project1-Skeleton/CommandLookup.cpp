@@ -68,9 +68,6 @@ int CommandLookup::execute(string& command){
         case QUIT:
             quit(args);
             break;
-        case INFO:
-            info();
-            break;
         default:
             cout << "NOT FOUND" << endl;
 
@@ -115,12 +112,6 @@ void CommandLookup::quit(vector<string>& args){
     }
 }
 
-void CommandLookup::info(){
-    // NEED A WAY TO SEND MESSAGE BACK TO CLIENT
-    //cout << "this IRC server is made possible by YUNG T and BIG DEV" << endl;
-}
-
-
 // returns enum of command
 Command CommandLookup::find(string& command){
     //Grab individual arguments from the msg string and store in a vector
@@ -133,6 +124,13 @@ Command CommandLookup::find(string& command){
 
     args.erase(args.begin());
     return cmd;
+}
+
+Command CommandLookup::getCommand(vector<string>& args){
+    to_lowercase(args[0]);
+    Command c = command_map[args[0]];
+    args.erase(args.begin());
+    return c;
 }
 
 void CommandLookup::to_lowercase(string& s){
