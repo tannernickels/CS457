@@ -18,27 +18,37 @@ class chatUser{
 
 public: 
 
-    chatUser(string& user, shared_ptr<cs457::tcpUserSocket> clientSocket) : username(user), connection(clientSocket){}
+    // CONSTRUCTORS
+    chatUser(string& user, shared_ptr<cs457::tcpUserSocket> clientSocket, int id_num) : username(user), connection(clientSocket), id(id_num){}
     chatUser(){}
     
+    // USER FIELDS
     string nickName; 
     bool isAway;
     string away_msg;
 
+    // TASK PROCESSOR
     void onEvent(Command cmd, vector<string>& args);
-    void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
+    
+
+    // ACCESSORS
     inline shared_ptr<cs457::tcpUserSocket> socketPointer(){ return this -> connection;}
-
     inline string& getUsername(){return this -> username;}
-    int usage(int code);
 
-
+    // MUTATORS
+    void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
+    
+    //Events
+    void nick(vector<string>& args);
+    void info();
 
 private:
 
     string username;
     shared_ptr<cs457::tcpUserSocket> connection; 
-    
+    int id;
+    int usage(int code);
+
 };
 
 #endif

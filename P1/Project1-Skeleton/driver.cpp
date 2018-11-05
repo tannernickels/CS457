@@ -12,81 +12,19 @@
 #include "FileIO.h"
 #include "serverData.h"
 #include "eventHandler.h"
+#include "server.h"
 
 using namespace std;
 
 
-serverData server_data;
+//serverData server_data;
+server server;
 
 //GLOBALS
 bool ready = true;
 
-
-// EventHandler Thread Functionality -- handles messages sent from a particular user/client
-void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> clientSocket){
-     if(msg.at(0) == '/'){
-        CommandLookup cl;
-        vector<string> args = cl.parseArguments(msg);
-        Command command = cl.getCommand(args);
-        user.onEvent(command, args);
-        //eventHandler eh;
-        //eh.processTask(msg, user);
-    }
-    else{
-        cout << "message was not a command.." << endl;
-        clientSocket.get()->sendString(msg); // relay message back to client to confirm acknowledgement 
-    }
-}
-
-
-// Authenticator Thread Functionality
-chatUser authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket, int id){
-    bool notAuthenticated = true;
-    string msg;
-    ssize_t val;
-    cout << "Authenticating Client " << id << endl;
-    string uname;
-    map <string, string> users = server_data.getUsers();
-
-    while(notAuthenticated){
-        tie(msg,val) = clientSocket.get()->recvString();
-        if(msg.substr(0,3) == "-u "){ // process username
-            string username = msg.substr(3, msg.size());
-            cout << "username[ " << username;
-            uname = username;
-            if(users.find( username ) != users.end()){
-                cout << " ] is valid" << endl;
-                clientSocket.get()->sendString("validUser");
-            }
-            else{
-                cout << " ] is invalid" << endl;
-                clientSocket.get()->sendString("invalidUser");
-            }
-        }
-        else{ //process password
-            cout << "pwd[ " << msg;
-            /* AUTHENTICATION SUCCESSFUL -- password is correct */
-            if(msg == users[uname].substr(0, users[uname].find(' '))){
-                cout << " ] is correct" << endl;
-                clientSocket.get()->sendString("authenticated!");
-                clientSocket.get()->sendString(server_data.getBanner()); // send banner
-                chatUser user(uname, clientSocket); // create active user
-                server_data.addActiveUser(user);   // update server data
-                //dumbUser = user;
-               // break;
-                return user;
-            }
-            /* password is incorrect */
-            else{
-                cout << " ] is incorrect" << endl;
-                clientSocket.get()->sendString("notAuthenticated");
-            }
-        }
-    }
-    cout << "[Client " << id<< "]: " << uname << " was successfully authenticated\n" << endl;
-}
-
-int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
+// HANDLES CLIENT CONNECTIONS
+int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
 {
     cout << "Client " << id << " Unique Socket ID: " << clientSocket.get()->getUniqueIdentifier() << endl;
     cout << "Waiting for message from Client Thread " << id << std::endl << std::endl;
@@ -94,7 +32,7 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     ssize_t val;
     bool cont =true ;  
 
-    std::future<chatUser> newActiveUser = std::async(&authenticateUser, clientSocket, id);
+    std::future<chatUser> newActiveUser = std::async(& server::authenticateUser, &server, clientSocket, id);
     chatUser dumbUser = newActiveUser.get();
     
 
@@ -110,11 +48,9 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
         cout << "[Client "<< id <<"] " << msg << "     (value return = " << val << ")" << endl;
         string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
         
-        thread eventHandler(messageHandler, msg, dumbUser, clientSocket);
-        eventHandler.join();
-       // eventHandler eh;
-        //thread eventHandler(eh.processTask, msg, dumbUser);
-        //eventHandler.join();
+        eventHandler consumer;
+        thread taskConsumer(&eventHandler::processTask, &consumer, msg, dumbUser, server);
+        taskConsumer.join();
 
         if (msg.substr(0,6) == "SERVER")
         {
@@ -134,7 +70,7 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     clientSocket.get()->sendString("goodbye\n"); 
     
     clientSocket.get()->closeSocket(); 
-    server_data.removeActiveUser(dumbUser.getUsername());
+    server.removeActiveUser(dumbUser.getUsername());
     return 1; 
 }
 
@@ -149,6 +85,7 @@ void startShell(){
 
 int main(int argc, char * argv[])
 {
+
     thread interactiveServer(startShell);
 
     cout << "Initializing Socket" << std::endl; 

@@ -187,11 +187,11 @@ int main(int argc, char *argv[])
 
     // BLOCKING CALL until client has "EXIT" process
     while(isRunning){}  
-
+    
     // CLEAN UP CLIENT SESSION 
     for (auto& t: threadList)
     {
-        t.get()->detach(); 
+        t.get()-> detach(); 
     }
 
     // Print session statistics
