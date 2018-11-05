@@ -4,7 +4,7 @@ void chatUser::setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket){
     connection = clientSocket;
 }
 
-void chatUser::onEvent(Command cmd, string& msg){
+void chatUser::onEvent(Command cmd, vector<string>& args){
 
      switch(cmd){
         case AWAY: std::cout << "execute AWAY()" << std::endl; break;
@@ -22,8 +22,11 @@ void chatUser::onEvent(Command cmd, string& msg){
         case LIST: std::cout << "execute LIST()" << std::endl; break;
         case MODE: std::cout << "execute MODE()" << std::endl; break;
         case NICK:  std::cout << "execute NICK()" << std::endl; 
-                    nickName = msg.substr(6,msg.size());
-                    cout << "upadated nickName: " << nickName <<endl; 
+                    if(args.size()==1){
+                        nickName = args[0];
+                    } else{
+                        usage(-1);
+                    }
                     break;
         case NOTICE: std::cout << "execute NOTICE()" << std::endl; break;
         case OPER: std::cout << "execute OPER()" << std::endl; break;
@@ -50,6 +53,20 @@ void chatUser::onEvent(Command cmd, string& msg){
         case INVALID: std::cout << "invalid command" << endl; break;
         default: std::cout << "ERROR IN COMMAND PROCESSING" << std::endl; break;
     }
-
-
 }
+
+int chatUser::usage(int code){
+    string u = "USAGE(" + to_string(code) + "): ";
+    switch(code){
+        case -1:
+            cout << u << "incorrect number of arguments" << endl;
+            connection.get() -> sendString(u + "incorrect number of arguments");
+            return code;
+        case -2:
+            cout << u << "incorrect argument error" << endl;
+        default:
+            return code;
+    }
+}
+
+

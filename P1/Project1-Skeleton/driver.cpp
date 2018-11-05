@@ -4,12 +4,14 @@
 #include <thread> 
 #include <vector> 
 #include <memory> 
+#include <future>
 #include "tcpUserSocket.h"
 #include "tcpServerSocket.h"
 #include "CommandLookup.h"
 #include "chatUser.h"
 #include "FileIO.h"
 #include "serverData.h"
+#include "eventHandler.h"
 
 using namespace std;
 
@@ -18,15 +20,17 @@ serverData server_data;
 
 //GLOBALS
 bool ready = true;
-//string uname;    //MOVE THIS INTO USER OBJ
-chatUser dumbUser;
+
 
 // EventHandler Thread Functionality -- handles messages sent from a particular user/client
 void messageHandler(string msg, chatUser user, shared_ptr<cs457::tcpUserSocket> clientSocket){
      if(msg.at(0) == '/'){
         CommandLookup cl;
-        Command command = cl.find(msg);
-        user.onEvent(command, msg);
+        vector<string> args = cl.parseArguments(msg);
+        Command command = cl.getCommand(args);
+        user.onEvent(command, args);
+        //eventHandler eh;
+        //eh.processTask(msg, user);
     }
     else{
         cout << "message was not a command.." << endl;
@@ -68,8 +72,9 @@ chatUser authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
                 clientSocket.get()->sendString(server_data.getBanner()); // send banner
                 chatUser user(uname, clientSocket); // create active user
                 server_data.addActiveUser(user);   // update server data
-                dumbUser = user;
-                break;
+                //dumbUser = user;
+               // break;
+                return user;
             }
             /* password is incorrect */
             else{
@@ -88,17 +93,16 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     string msg;
     ssize_t val;
     bool cont =true ;  
-    //chatUser user; // create user object
-    //activeUsers.push_back(user);  // add user to list of active users
-    //user.setSocket(clientSocket);
 
-    thread authenticator(authenticateUser, clientSocket, id);
-    authenticator.join();
+    std::future<chatUser> newActiveUser = std::async(&authenticateUser, clientSocket, id);
+    chatUser dumbUser = newActiveUser.get();
+    
 
     while (cont) 
     {
         tie(msg,val) = clientSocket.get()->recvString();
         if (msg.substr(0,4) == "EXIT"){ // replace for /QUIT functionality
+            
             cout << "[Client " << id << "] exits chat server" << endl;
             cont = false; 
             break;
@@ -108,6 +112,9 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
         
         thread eventHandler(messageHandler, msg, dumbUser, clientSocket);
         eventHandler.join();
+       // eventHandler eh;
+        //thread eventHandler(eh.processTask, msg, dumbUser);
+        //eventHandler.join();
 
         if (msg.substr(0,6) == "SERVER")
         {
@@ -127,7 +134,7 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket,int id)
     clientSocket.get()->sendString("goodbye\n"); 
     
     clientSocket.get()->closeSocket(); 
-    
+    server_data.removeActiveUser(dumbUser.getUsername());
     return 1; 
 }
 

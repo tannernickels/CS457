@@ -31,3 +31,14 @@ chatUser& serverData::getActiveUser(string& username){
     }
    
 }
+
+void serverData::removeActiveUser(string& username){
+    string curr;
+    for(vector<chatUser>::iterator it = activeUsers.begin(); it != activeUsers.end(); ++it){
+        if(username.compare(it -> getUsername()) == 0){
+            activeUsers.erase(it);
+            break; 
+        }
+    }
+    
+}

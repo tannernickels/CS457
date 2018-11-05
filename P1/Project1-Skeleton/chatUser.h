@@ -11,6 +11,8 @@ using std::cout;
 using std::cerr;
 using std::endl;
 #include "cmds.h"
+#include <vector>
+using std::vector;
 
 class chatUser{
 
@@ -18,12 +20,17 @@ public:
 
     chatUser(string& user, shared_ptr<cs457::tcpUserSocket> clientSocket) : username(user), connection(clientSocket){}
     chatUser(){}
+    
     string nickName; 
-    void onEvent(Command cmd, string& msg);
+    bool isAway;
+    string away_msg;
+
+    void onEvent(Command cmd, vector<string>& args);
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
+    inline shared_ptr<cs457::tcpUserSocket> socketPointer(){ return this -> connection;}
 
-    inline const string& getUsername(){return this -> username;}
-
+    inline string& getUsername(){return this -> username;}
+    int usage(int code);
 
 
 

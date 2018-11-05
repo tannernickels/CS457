@@ -63,7 +63,7 @@ void configureSocketAndServerConnection(char *serverIp, int port){
 void outgoing(){
     while(isRunning){
         sleep(1);
-        cout << ">";
+        cout << username << ">";
         string data;
         getline(cin, data);
         memset(&msg, 0, sizeof(msg));//clear the buffer

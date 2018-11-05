@@ -16,11 +16,12 @@ class serverData{
 
         chatUser& getActiveUser(string& username);
         bool tryGetActiveUser(string& username);
-        
+
         //MUTATORS
         inline void addActiveUser(chatUser& user){activeUsers.push_back(user);}
         inline void addNewlyRegisteredUser(string& username, string& userData){this -> users.insert(make_pair(username, userData));}
         inline void updateBanner(string& banner){this -> banner = banner;}
+        void removeActiveUser(string& username);
 
 
     private:

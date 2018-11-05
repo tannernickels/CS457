@@ -12,5 +12,7 @@ enum Command {AWAY, CONNECT, DIE, HELP,
                 USER, USERHOST, USERIP, USERS,
                 VERSION, WALLOPS, WHO, WHOIS, INVALID};
 
+enum Handler {SERVER, CHATUSER};
+enum taskType {COMMAND=true, MESSAGE=false};
 
 #endif
