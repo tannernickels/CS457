@@ -54,17 +54,16 @@ public:
     //Writes a string as is to the file (i.e. does not append anything to string)
     void writeString(string& s);
 
-    //Writes a StringMap object to file, appending a newline after each entry
+    //Writes a StringMap object to file, appending a newline after each entry. Use to write users.txt, and .conf
     void writeMap(StringMap& string_map);
 
     //Writes a vector to file, appending a newline after each item
     void writeList(vector<string>& list);
 
-    //Nearly identical to writeMap(). Separates entries by tab instead of space
-    void writeConfig(StringMap& config);
-
+    //writes a string,string pair value to file. Currently used by writeMap
     void writePair(pair<string, string> string_pair);
     
+    //Check which streams are open and close them
     void close();
 private:
 

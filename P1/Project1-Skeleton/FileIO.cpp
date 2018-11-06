@@ -141,7 +141,7 @@ void FileIO::writeString(string& s){
 
 void FileIO::writeMap(StringMap& string_map){
     for(StringMapIt it = string_map.begin(); it != string_map.end(); ++it){
-        ostr << it->first << " " << it->second << "\n";
+        writePair(*it);
     }
 }
 
@@ -151,29 +151,6 @@ void FileIO::writeList(vector<string>& list){
     }
 }
 
-void FileIO::writeConfig(StringMap& config){
-    for(StringMapIt it = config.begin(); it != config.end(); ++it){
-        //ostr << it->first << "\t" << it->second << "\n";
-        writePair(*it);
-    }
-}
-
 void FileIO::writePair(pair<string, string> string_pair){
     ostr << string_pair.first << "\t" << string_pair.second << "\n";
-}
-
-int main(){
-    
-    FileIO write("test.txt", "w");
-    vector<string> list;
-    list.push_back("Apple");
-    list.push_back("Banana");
-    list.push_back("Racecar");
-    StringMap s_map;
-    s_map.insert(make_pair("Apple", "Very yummy"));
-    s_map.insert(make_pair("Banana", "Pretty good"));
-    s_map.insert(make_pair("Racecar", "VROOOOOM VROOOOOOOOM"));
-
-    write.writeConfig(s_map);
-
 }

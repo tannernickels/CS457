@@ -9,7 +9,7 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "-g", "FileIO.cpp", "chatUser.cpp", "CommandLookup.cpp", "tcpUserSocket.cpp", "tcpServerSocket.cpp", "driver.cpp",  "-pthread", "-o", "driver.out", "&&", "./driver.out"
+                "-g", "FileIO.cpp", "chatUser.cpp", "CommandLookup.cpp", "tcpUserSocket.cpp", "tcpServerSocket.cpp", "server.cpp", "driver.cpp",  "-pthread", "-o", "driver.out", "&&", "./driver.out"
             ],
             "group": {
                 "kind": "build",

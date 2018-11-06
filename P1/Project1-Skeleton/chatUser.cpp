@@ -9,7 +9,8 @@ void chatUser::onEvent(Command cmd, vector<string>& args){
      switch(cmd){
         case AWAY:  away(args);
                     break;
-        case HELP: std::cout << "execute HELP()" << std::endl; break;
+        case HELP:  help(); 
+                    break;
         case INFO:  info();
                     break;
         case NICK:  nick(args);
@@ -26,6 +27,7 @@ void chatUser::onEvent(Command cmd, vector<string>& args){
 void chatUser::away(vector<string>& args){
     if(args.size()==0){
         isAway = false;
+        connection.get()->sendString("Away mode set to off");
     }else{
         isAway = true;
         for (unsigned int i = 0; i < args.size(); i++){
@@ -35,7 +37,14 @@ void chatUser::away(vector<string>& args){
                 away_msg += args[i] + ' ';
             }
         }
+        connection.get()->sendString("Away mode set to on. Message displayed while away:\n" + away_msg);
     }
+}
+
+void chatUser::help(){
+    FileIO reader("db/help.txt", "r");
+    string help_msg = reader.readFull();
+    connection.get()->sendString(help_msg);
 }
 
 void chatUser::info(){

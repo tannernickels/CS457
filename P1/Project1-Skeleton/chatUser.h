@@ -13,6 +13,7 @@ using std::endl;
 #include "cmds.h"
 #include <vector>
 using std::vector;
+#include "FileIO.h"
 
 class chatUser{
 
@@ -40,6 +41,7 @@ public:
     
     //Events
     void away(vector<string>& args);
+    void help();
     void info();
     void nick(vector<string>& args);
     //set username?? 
