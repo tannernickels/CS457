@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ -g FileIO.cpp chatUser.cpp CommandLookup.cpp tcpUserSocket.cpp tcpServerSocket.cpp driver.cpp -pthread -o driver.out && ./driver.out
+g++ -g eventHandler.cpp server.cpp serverData.cpp FileIO.cpp chatUser.cpp CommandLookup.cpp tcpUserSocket.cpp tcpServerSocket.cpp driver.cpp -pthread -o driver.out && ./driver.out

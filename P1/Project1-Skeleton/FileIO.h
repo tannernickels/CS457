@@ -11,6 +11,7 @@
 using namespace std;
 
 typedef map<string, string> StringMap;
+typedef map<string, string>::iterator StringMapIt;
 
 /* Wrapper class for ifstream file reading. Provides useful methods for extracting various data formats from different files
  *  -Constructor: accepts a filename to read from. This way, a new instance of FileIO must be created for each file to be read
@@ -19,8 +20,10 @@ class FileIO{
 
 public:
     
-    FileIO(string filename){openFile(filename);}
+    FileIO(string filename, string option){openFile(filename, option);}
+    ~FileIO(){close();}
     
+    //METHODS FOR READING FROM FILE
     //reads an entire file into a string as is, including whitespace and newlines. useful for banner.txt
     string readFull();
     //reads the next line in the stream and returns it
@@ -46,13 +49,30 @@ public:
     vector<string> getEveryLine();
 
     map<string, string> readUsersTXT();
+
+    //METHODS FOR WRITING TO FILE
+    //Writes a string as is to the file (i.e. does not append anything to string)
+    void writeString(string& s);
+
+    //Writes a StringMap object to file, appending a newline after each entry
+    void writeMap(StringMap& string_map);
+
+    //Writes a vector to file, appending a newline after each item
+    void writeList(vector<string>& list);
+
+    //Nearly identical to writeMap(). Separates entries by tab instead of space
+    void writeConfig(StringMap& config);
     
+    void close();
 private:
 
     ifstream istr;
+    ofstream ostr;
         
-    //opens the file in the istr. accessed by the constructor
-    inline void openFile(string& filename){istr.open(filename);}
+    // Opens the file depending on "r" or "w" to read or write to file, and "a" to append to a file.
+    // Accessed by the constructor
+    void openFile(string& filename, string& option);
+    
     
 };
 

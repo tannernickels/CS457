@@ -33,6 +33,7 @@ public:
     int execute(string& command);
     int usage(int code);
     Command find(string& command);
+    Command getCommand(vector<string>& args);
     void printVector(vector<string>& v);
     void to_lowercase(string& s);
 
@@ -41,7 +42,6 @@ private:
     CommandMap command_map;
 
     void quit(vector<string>& args);
-    void info();
 
 };
 

@@ -1,5 +1,27 @@
 #include "FileIO.h"
 
+void FileIO::openFile(string& filename, string& option){
+    if(option.size()!=1){
+        cout << "INVALID FILE OPTION: \"r\" to read, \"w\" to write, or \"a\" to append to file" << endl;
+    }
+    switch(option[0]){
+        case 'r':
+            istr.open(filename);
+            break;
+        case 'w':
+            ostr.open(filename);
+            break;
+        case 'a':
+            ostr.open(filename, ofstream::app);
+            break;
+    }
+}
+
+void FileIO::close(){
+    if (istr.is_open()) istr.close();
+    if (ostr.is_open()) ostr.close();
+}
+
 string FileIO::readFull(){
     string buf = "";
     string current = "";
@@ -75,7 +97,7 @@ StringMap FileIO::getConfig(){
 
 void FileIO::printStringMap(StringMap& config){
     cout << "PRINTING CONFIGURATION" << endl;
-    for(map<string, string>::iterator it = config.begin(); it!=config.end(); ++it){
+    for(StringMapIt it = config.begin(); it!=config.end(); ++it){
             cout << it->first << ": " << it->second << endl;
     }
 }
@@ -111,4 +133,42 @@ map<string, string> FileIO::readUsersTXT(){
         data.insert(userinfo);
     }
     return data;
+}
+
+void FileIO::writeString(string& s){
+    ostr << s;
+}
+
+void FileIO::writeMap(StringMap& string_map){
+    for(StringMapIt it = string_map.begin(); it != string_map.end(); ++it){
+        ostr << it->first << " " << it->second << "\n";
+    }
+}
+
+void FileIO::writeList(vector<string>& list){
+    for(unsigned int i = 0; i < list.size(); i++){
+        ostr << list[i] << "\n";
+    }
+}
+
+void FileIO::writeConfig(StringMap& config){
+    for(StringMapIt it = config.begin(); it != config.end(); ++it){
+        ostr << it->first << "\t" << it->second << "\n";
+    }
+}
+
+int main(){
+    
+    FileIO write("test.txt", "w");
+    vector<string> list;
+    list.push_back("Apple");
+    list.push_back("Banana");
+    list.push_back("Racecar");
+    StringMap s_map;
+    s_map.insert(make_pair("Apple", "Very yummy"));
+    s_map.insert(make_pair("Banana", "Pretty good"));
+    s_map.insert(make_pair("Racecar", "VROOOOOM VROOOOOOOOM"));
+
+    write.writeConfig(s_map);
+
 }
