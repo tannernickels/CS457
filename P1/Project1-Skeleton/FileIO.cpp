@@ -153,8 +153,13 @@ void FileIO::writeList(vector<string>& list){
 
 void FileIO::writeConfig(StringMap& config){
     for(StringMapIt it = config.begin(); it != config.end(); ++it){
-        ostr << it->first << "\t" << it->second << "\n";
+        //ostr << it->first << "\t" << it->second << "\n";
+        writePair(*it);
     }
+}
+
+void FileIO::writePair(pair<string, string> string_pair){
+    ostr << string_pair.first << "\t" << string_pair.second << "\n";
 }
 
 int main(){

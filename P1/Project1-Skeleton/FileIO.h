@@ -62,6 +62,8 @@ public:
 
     //Nearly identical to writeMap(). Separates entries by tab instead of space
     void writeConfig(StringMap& config);
+
+    void writePair(pair<string, string> string_pair);
     
     void close();
 private:
