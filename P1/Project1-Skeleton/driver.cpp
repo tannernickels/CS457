@@ -52,19 +52,7 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
         thread taskConsumer(&eventHandler::processTask, &consumer, msg, dumbUser, server);
         taskConsumer.join();
 
-        if (msg.substr(0,6) == "SERVER")
-        {
-            thread childTExit(&cs457::tcpUserSocket::sendString,clientSocket.get(),"GOODBYE EVERYONE",false);
-            thread childTExit2(&cs457::tcpUserSocket::sendString,clientSocket.get(),"\n",false);
-            ready = false;   
-            cont = false;   
-            childTExit.join(); 
-            childTExit2.join();
-        }
-        else
-        {
-            cout << "waiting for another message\n" << endl; 
-        }
+        cout << "waiting for another message\n" << endl; 
     }
 
     clientSocket.get()->sendString("goodbye\n"); 

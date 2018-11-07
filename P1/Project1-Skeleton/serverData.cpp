@@ -7,6 +7,10 @@ serverData::serverData(){
     // BANNER IO
     FileIO bannerTxt("db/banner.txt", "r");
     banner = bannerTxt.readFull();
+    // CHANNELS IO
+    FileIO channelsTxt("db/channels.txt", "r");
+    channels = channelsTxt.readUsersTXT();
+    initializeChatRooms(channels);
 
 }
 
@@ -41,4 +45,26 @@ void serverData::removeActiveUser(string& username){
         }
     }
     
+}
+
+string serverData::getChannelDescription(string attributes){
+    return attributes.substr(0, attributes.find(' '));	
+}
+string serverData::getChannelPass(string attributes){
+    return attributes.substr(attributes.find(' ') + 1, attributes.size());
+}
+
+// populates map<channel_name, chatRoom> chatRooms
+void serverData::initializeChatRooms(map<string, string> channels){
+
+    for ( const auto &pair : channels ) {
+
+        string channel_name = pair.first;
+        string channel_description = getChannelDescription(pair.second);
+        string channel_password = getChannelPass(pair.second); 
+        
+        chatRoom room(channel_name, channel_description, channel_password);
+        chatRooms.insert(make_pair(channel_name, room));
+
+    }
 }
