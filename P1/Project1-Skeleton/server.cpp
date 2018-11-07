@@ -89,5 +89,6 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
 
 void server::die(){
     std::cout << "executing DIE()" << std::endl; 
+    // TODO: send every active user the goodbye string so that they can terminate before the server shuts down
     exit(0);
 }
