@@ -47,7 +47,6 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
         }
         cout << "[Client "<< id <<"] " << msg << "     (value return = " << val << ")" << endl;
         string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
-        
         eventHandler consumer;
         thread taskConsumer(&eventHandler::processTask, &consumer, msg, dumbUser, server);
         taskConsumer.join();

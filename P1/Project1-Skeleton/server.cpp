@@ -1,7 +1,7 @@
 #include "server.h"
 
 
-void server::onEvent(Command cmd, vector<string>& args){
+void server::onEvent(Command cmd, vector<string>& args, chatUser user){
     switch(cmd){
     
         case CONNECT: std::cout << "execute CONNECT()" << std::endl; break;
@@ -20,7 +20,7 @@ void server::onEvent(Command cmd, vector<string>& args){
         case PART: std::cout << "execute PART()" << std::endl; break;
         case PASS: std::cout << "execute PASS()" << std::endl; break;
        
-        case PRIVMSG: privmsg(args); break;
+        case PRIVMSG: privmsg(args, user); break;
         case QUIT: std::cout << "execute QUIT()" << std::endl; break;
         case RESTART: std::cout << "execute RESTART()" << std::endl; break;
         case RULES: std::cout << "execute RULES()" << std::endl; break;
@@ -95,8 +95,8 @@ void server::die(){
     exit(0);
 }
 
-void server::privmsg(vector<string>& args){
-    string recipient = args[0];
+void server::privmsg(vector<string>& args, chatUser user){
+    string name = args[0];
     args.erase(args.begin());
     string message = "";
     for (unsigned int i = 0; i < args.size(); i++){
@@ -106,9 +106,9 @@ void server::privmsg(vector<string>& args){
             message += args[i] + " ";
         }
     }
-    if(server_data.tryGetActiveUser(recipient)){
-        chatUser user = server_data.getActiveUser(recipient);
-        user.writeToSocket(message);
+    if(server_data.tryGetActiveUser(name)){
+        chatUser recipient = server_data.getActiveUser(name);
+        recipient.writeToSocket(user.getUsername() +  ": " + message);
     }
     
 }

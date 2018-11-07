@@ -5,7 +5,7 @@
 enum Command {AWAY, CONNECT, DIE, HELP,
                 INFO, INVITE, ISON, JOIN,
                 KICK, KILL, KNOCK, LIST,
-                MODE, NICK, NOTICE, OPER,
+                MODE, MSG, NICK, NOTICE, OPER,
                 PART, PASS, PING, PONG,
                 PRIVMSG, QUIT, RESTART, RULES,
                 SETNAME, SILENCE, TIME, TOPIC,

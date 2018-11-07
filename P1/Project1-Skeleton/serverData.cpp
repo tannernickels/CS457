@@ -9,7 +9,7 @@ serverData::serverData(){
     banner = bannerTxt.readFull();
     // CHANNELS IO
     FileIO channelsTxt("db/channels.txt", "r");
-    channels = channelsTxt.readUsersTXT();
+    channels = channelsTxt.readAttributesToMap();
     initializeChatRooms(channels);
 
 }

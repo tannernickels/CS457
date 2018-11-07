@@ -27,9 +27,14 @@ public:
     inline string getChannelDecription(){ return this->description; }
     
     // SETTERS
-    inline changeName(string name) { this->channel_name = name; }
-    inline changeDescription(string d) { this->description = d; }
-    inline changePassword(string pwd) { this->password = pwd; }
+    inline void changeName(string name) { this->channel_name = name; }
+    inline void changeDescription(string d) { this->description = d; }
+    inline void changePassword(string pwd) { this->password = pwd; }
+
+    //CHAT METHODS
+
+
+
 
 private:
     string channel_name;
