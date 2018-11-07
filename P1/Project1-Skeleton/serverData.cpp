@@ -2,10 +2,10 @@
 
 serverData::serverData(){
     // USERS IO
-    FileIO usersTXT("db/users.txt");
+    FileIO usersTXT("db/users.txt", "r");
     users = usersTXT.readUsersTXT();
     // BANNER IO
-    FileIO bannerTxt("db/banner.txt");
+    FileIO bannerTxt("db/banner.txt", "r");
     banner = bannerTxt.readFull();
 
 }

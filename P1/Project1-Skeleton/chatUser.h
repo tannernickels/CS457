@@ -13,6 +13,7 @@ using std::endl;
 #include "cmds.h"
 #include <vector>
 using std::vector;
+#include "FileIO.h"
 
 class chatUser{
 
@@ -39,8 +40,12 @@ public:
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
     
     //Events
-    void nick(vector<string>& args);
+    void away(vector<string>& args);
+    void help();
     void info();
+    void nick(vector<string>& args);
+    //set username?? 
+    void set_name(vector<string>& args);
 
 private:
 

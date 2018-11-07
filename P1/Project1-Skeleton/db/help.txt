@@ -1,0 +1,10 @@
+Welcome to the YUNG T and BIG DEV IRC chat server!!
+Commands are typed with a forward slash and are case insensitive:
+    e.x. - /command is the same as /COMMAND
+    
+Valid Commands are:
+
+-   /AWAY <message> - with arguments, away sets the user to "away" mode and sets an away message, displayed when someone attempts to message you.
+                    - with no arguments, turns off "away" mode
+-   /INFO           - provides information about the server
+-   /NICK <nickname>- allows user to change their nickName
