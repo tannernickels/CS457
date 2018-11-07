@@ -20,7 +20,7 @@ void server::onEvent(Command cmd, vector<string>& args){
         case PART: std::cout << "execute PART()" << std::endl; break;
         case PASS: std::cout << "execute PASS()" << std::endl; break;
        
-        case PRIVMSG: std::cout << "execute PRIVMSG()" << std::endl; break;
+        case PRIVMSG: privmsg(args); break;
         case QUIT: std::cout << "execute QUIT()" << std::endl; break;
         case RESTART: std::cout << "execute RESTART()" << std::endl; break;
         case RULES: std::cout << "execute RULES()" << std::endl; break;
@@ -40,6 +40,7 @@ void server::onEvent(Command cmd, vector<string>& args){
         default: std::cout << "ERROR IN COMMAND PROCESSING" << std::endl; break;
     }
 }
+
 
 // Authenticator Thread Functionality
 chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket, int id){
@@ -91,4 +92,22 @@ void server::die(){
     std::cout << "executing DIE()" << std::endl; 
     // TODO: send every active user the goodbye string so that they can terminate before the server shuts down
     exit(0);
+}
+
+void server::privmsg(vector<string>& args){
+    string recipient = args[0];
+    args.erase(args.begin());
+    string message = "";
+    for (unsigned int i = 0; i < args.size(); i++){
+        if(i==args.size()-1){
+            message += args[i] + "\n";
+        }else{
+            message += args[i] + " ";
+        }
+    }
+    if(server_data.tryGetActiveUser(recipient)){
+        chatUser user = server_data.getActiveUser(recipient);
+        user.writeToSocket(message);
+    }
+    
 }

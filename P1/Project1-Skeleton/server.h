@@ -31,6 +31,8 @@ class server{
         // Events
         void die();
 
+        void privmsg(vector<string>& args);
+
     private:
         serverData server_data;
 };
