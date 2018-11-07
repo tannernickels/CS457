@@ -53,6 +53,7 @@ private:
 
     string username;
     Level level;
+    vector<string> user_chatrooms;
     shared_ptr<cs457::tcpUserSocket> connection; 
     int id;
     int usage(int code);
