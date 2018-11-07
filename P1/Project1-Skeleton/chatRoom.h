@@ -27,9 +27,24 @@ public:
     inline string getChannelDecription(){ return this->description; }
     
     // SETTERS
-    inline changeName(string name) { this->channel_name = name; }
-    inline changeDescription(string d) { this->description = d; }
-    inline changePassword(string pwd) { this->password = pwd; }
+    inline void changeName(string name) { this->channel_name = name; }
+    inline void changeDescription(string d) { this->description = d; }
+    inline void changePassword(string pwd) { this->password = pwd; }
+
+    //CHAT METHODS
+    /*TODO:
+        //iterates through vector of chat Users and sends message to each using user.writeToSocket()
+        //skips user who sent the message
+        void sendMessageToChannel(string& message);
+
+        //authenticate user, add user to channel, return confirmation message
+        //add channel to user object
+        // /JOIN <channel> <password>
+        void joinChannel(chatUser user, string& password)
+    */
+
+
+
 
 private:
     string channel_name;

@@ -30,7 +30,7 @@ public:
 
     // TASK PROCESSOR
     void onEvent(Command cmd, vector<string>& args);
-    inline void writeToSocket(string& message){this -> connection.get()->sendString(message);};
+    inline void writeToSocket(string message){this -> connection.get()->sendString(message);};
 
     // ACCESSORS
     inline shared_ptr<cs457::tcpUserSocket> socketPointer(){ return this -> connection;}
@@ -53,6 +53,7 @@ private:
 
     string username;
     Level level;
+    vector<string> user_chatrooms;
     shared_ptr<cs457::tcpUserSocket> connection; 
     int id;
     int usage(int code);

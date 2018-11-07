@@ -23,8 +23,9 @@ void eventHandler::processCommand(string msg, chatUser user, server server){
     vector<string> args = cl.parseArguments(msg);
     Command command = cl.getCommand(args);
     Handler handler = getProcessor(command);
+    
     switch(handler){
-        case SERVER: server.onEvent(command, args); break;
+        case SERVER: server.onEvent(command, args, user); break;
         case CHATUSER: user.onEvent(command, args); break; 
     }
 }

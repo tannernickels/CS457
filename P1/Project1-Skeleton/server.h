@@ -23,7 +23,7 @@ class server{
 
     public:
 
-        void onEvent(Command cmd, vector<string>& args);
+        void onEvent(Command cmd, vector<string>& args, chatUser user);
         chatUser authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket, int id);
 
         inline void removeActiveUser(string& username) { server_data.removeActiveUser(username); } // allows driver to removeActiveUser
@@ -31,7 +31,7 @@ class server{
         // Events
         void die();
 
-        void privmsg(vector<string>& args);
+        void privmsg(vector<string>& args, chatUser user);
 
     private:
         serverData server_data;
