@@ -124,7 +124,7 @@ vector<string> FileIO::getEveryLine(){
     return list;
 }
 
-map<string, string> FileIO::readUsersTXT(){
+StringMap FileIO::readAttributesToMap(){
     map<string, string> data;
     while(!istr.fail()){
         pair<string, string> userinfo = packageLine();

@@ -3,11 +3,29 @@
 serverData::serverData(){
     // USERS IO
     FileIO usersTXT("db/users.txt", "r");
-    users = usersTXT.readUsersTXT();
+    users = usersTXT.readAttributesToMap();
     // BANNER IO
     FileIO bannerTxt("db/banner.txt", "r");
     banner = bannerTxt.readFull();
 
+}
+
+vector<string> serverData::getUserData(string& username){
+    StringMapIt it = users.find(username);
+    vector<string> userData;
+    string dataString = "";
+    if(it!=users.end()){
+        dataString = it->second;
+    }
+    istringstream iss(dataString);
+    string curr;
+    do{
+        iss >> curr;
+        if(curr.size()!=0){
+            userData.push_back(curr);
+        }
+    }while(iss);
+    return userData;
 }
 
 bool serverData::tryGetActiveUser(string& username){
