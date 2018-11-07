@@ -1,3 +1,9 @@
 #!/bin/bash
 
-g++ client.cpp -pthread -o client.out && ./client.out -h 127.0.0.1 -u dcdennis -p 2000
+if [[ $# -ne 1 ]]
+then
+	echo "USAGE $0: script takes username as argument"
+	exit -1
+fi
+
+g++ client.cpp -pthread -o client.out && ./client.out -h 127.0.0.1 -u $1 -p 2000
