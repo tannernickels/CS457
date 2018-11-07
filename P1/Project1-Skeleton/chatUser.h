@@ -38,6 +38,8 @@ public:
 
     // MUTATORS
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
+
+    void setLevel(string& level);
     
     //Events
     void away(vector<string>& args);
@@ -50,6 +52,7 @@ public:
 private:
 
     string username;
+    Level level;
     shared_ptr<cs457::tcpUserSocket> connection; 
     int id;
     int usage(int code);

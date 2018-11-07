@@ -20,8 +20,10 @@ class serverData{
         string getChannelDescription(string attributes);
         string getChannelPass(string attributes);
 
+        vector<string> getUserData(string& username);
         chatUser& getActiveUser(string& username);
         bool tryGetActiveUser(string& username);
+        
 
         //MUTATORS
         inline void addActiveUser(chatUser& user){activeUsers.push_back(user);}

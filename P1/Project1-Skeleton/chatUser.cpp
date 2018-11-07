@@ -4,6 +4,21 @@ void chatUser::setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket){
     connection = clientSocket;
 }
 
+void chatUser::setLevel(string& level){
+    Level l;
+    if(level=="user"){
+        l = SLUGS;
+    }else if(level=="channelop"){
+        l = CHANNELOP;
+    }else if(level=="sysop"){
+        l = SYSOP;
+    }else if(level=="admin"){
+        l = ADMIN;
+    }else{
+        return;
+    }
+}
+
 void chatUser::onEvent(Command cmd, vector<string>& args){
 
      switch(cmd){

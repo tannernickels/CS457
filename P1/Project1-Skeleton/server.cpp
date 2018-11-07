@@ -74,6 +74,7 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
                 clientSocket.get()->sendString("authenticated!");
                 clientSocket.get()->sendString(server_data.getBanner()); // send banner
                 chatUser user(uname, clientSocket, id); // create active user
+                user.setLevel(server_data.getUserData(uname)[1]);
                 server_data.addActiveUser(user);   // update server data
                 return user;
             }

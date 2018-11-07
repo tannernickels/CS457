@@ -48,7 +48,7 @@ public:
     //returns a vector of strings where every element is an entire line from the provided file
     vector<string> getEveryLine();
 
-    map<string, string> readUsersTXT();
+    StringMap readAttributesToMap();
 
     //METHODS FOR WRITING TO FILE
     //Writes a string as is to the file (i.e. does not append anything to string)
