@@ -13,7 +13,8 @@ class serverData{
         inline vector<chatUser>& getActiveUsers(){return this -> activeUsers;}
         inline map<string, string>& getUsers(){return this -> users;}
         inline string getBanner(){return this -> banner;}
-
+        
+        vector<string> getUserData(string& username);
         chatUser& getActiveUser(string& username);
         bool tryGetActiveUser(string& username);
 
