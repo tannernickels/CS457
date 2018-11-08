@@ -17,8 +17,11 @@ class serverData{
         inline map<string, string>& getUsers(){return this -> users;}
         inline string getBanner(){return this -> banner;}
       
+        bool tryGetChatRoom(string& name);
+        chatRoom& getChatRoom(string& name); //{ return chatRooms[name]; }
         string getChannelDescription(string attributes);
         string getChannelPass(string attributes);
+
 
         vector<string> getUserData(string& username);
         chatUser& getActiveUser(string& username);
@@ -39,6 +42,7 @@ class serverData{
         string banner;
         map <string, string> channels;
         map <string, chatRoom> chatRooms;
+        vector<chatRoom> cRooms;
 
 
 };

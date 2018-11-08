@@ -1,7 +1,7 @@
 #include "eventHandler.h"
 
 // HIGHEST-LEVEL OF REQUEST PROCESSING
-void eventHandler::processTask(string msg, chatUser user, server server){
+void eventHandler::processTask(string msg, chatUser user, server& server){
  bool type = isCommand(msg);
  switch(type){
      case COMMAND:processCommand(msg, user, server); break;
@@ -18,7 +18,7 @@ void eventHandler::processMessage(string msg, chatUser user){
 }
 
 // COMMAND PROCESSING
-void eventHandler::processCommand(string msg, chatUser user, server server){
+void eventHandler::processCommand(string msg, chatUser user, server& server){
     
     vector<string> args = cl.parseArguments(msg);
     Command command = cl.getCommand(args);
@@ -46,6 +46,7 @@ void eventHandler::initializeMap(){
     processor_map.insert(make_pair(KNOCK, "server"));
     processor_map.insert(make_pair(LIST, "server"));
     processor_map.insert(make_pair(MODE, "server"));
+    processor_map.insert(make_pair(MSG, "server"));
     processor_map.insert(make_pair(NICK, "chatUser"));
     processor_map.insert(make_pair(NOTICE, "server"));
     processor_map.insert(make_pair(OPER, "server"));
