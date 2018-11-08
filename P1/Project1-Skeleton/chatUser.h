@@ -23,7 +23,7 @@ public:
     chatUser(string& user, shared_ptr<cs457::tcpUserSocket> clientSocket, int id_num) : username(user), connection(clientSocket), id(id_num){}
     chatUser(){}
     
-    // USER FIELDS
+    // PUBLIC USER FIELDS
     string nickName; 
     bool isAway;
     string away_msg;
@@ -35,11 +35,13 @@ public:
     // ACCESSORS
     inline shared_ptr<cs457::tcpUserSocket> socketPointer(){ return this -> connection;}
     inline string& getUsername(){return this -> username;}
+    inline string& getIP(){ return this -> ip; }
 
     // MUTATORS
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
     void setLevel(string& level);
     inline void joinChatRoom(string& channel_name) { rooms.push_back(channel_name); }
+    inline void setIP(string& ip) { this->ip = ip; }
     
     //Events
     void away(vector<string>& args);
@@ -58,6 +60,7 @@ private:
     int id;
     int usage(int code);
     vector<string> rooms;
+    string ip;
 };
 
 #endif
