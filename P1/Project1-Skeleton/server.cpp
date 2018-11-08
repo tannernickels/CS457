@@ -60,7 +60,21 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
 
     while(notAuthenticated){
         tie(msg,val) = clientSocket.get()->recvString();
-        if(msg.substr(0,3) == "-u "){ // process username
+        if(msg == "guest"){ // process guest request
+            cout << "Logging in new guest to irc server" << endl;
+            string guest_response = "You are Guest-" + std::to_string(id) + "!";
+            clientSocket.get()->sendString(guest_response);
+            clientSocket.get()->sendString(server_data.getBanner()); // send banner
+            string guest_username = "Guest-" + std::to_string(id);
+            chatUser guest(guest_username, clientSocket, id); // create active user
+            string lvl = "user";
+            guest.setLevel(lvl); // set level of guest
+            string IPV4 = clientSocket.get()->getIP();
+            guest.setIP(IPV4); // set IPV4 Address of user
+            server_data.addActiveUser(guest);   // update server data
+            return guest;
+        }
+        else if(msg.substr(0,3) == "-u "){ // process username
             string username = msg.substr(3, msg.size());
             cout << "username[ " << username;
             uname = username;
