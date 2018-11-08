@@ -30,8 +30,9 @@ class server{
 
         // Events
         void die();
-
-        void privmsg(vector<string>& args, chatUser user);
+        void msg(vector<string>& args, chatUser& user);
+        void privmsg(vector<string>& args, chatUser& user);
+        void join(vector<string>& args, chatUser& user);
 
     private:
         serverData server_data;

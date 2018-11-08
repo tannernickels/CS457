@@ -38,8 +38,8 @@ public:
 
     // MUTATORS
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);
-
     void setLevel(string& level);
+    inline void joinChatRoom(string& channel_name) { rooms.push_back(channel_name); }
     
     //Events
     void away(vector<string>& args);
@@ -57,7 +57,7 @@ private:
     shared_ptr<cs457::tcpUserSocket> connection; 
     int id;
     int usage(int code);
-
+    vector<string> rooms;
 };
 
 #endif

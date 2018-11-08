@@ -8,12 +8,13 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser user){
         case DIE: die(); break;
         case INVITE: std::cout << "execute INVITE()" << std::endl; break;
         case ISON: std::cout << "execute ISON()" << std::endl; break;
-        case JOIN: std::cout << "execute JOIN()" << std::endl; break;
+        case JOIN: std::cout << "execute JOIN()" << std::endl; join(args, user); break;
         case KICK: std::cout << "execute KICK()" << std::endl; break;
         case KILL: std::cout << "execute KILL()" << std::endl; break;
         case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
         case LIST: std::cout << "execute LIST()" << std::endl; break;
         case MODE: std::cout << "execute MODE()" << std::endl; break;
+        case MSG: std::cout << "execute MSG()" << std::endl; msg(args, user); break;
         
         case NOTICE: std::cout << "execute NOTICE()" << std::endl; break;
         case OPER: std::cout << "execute OPER()" << std::endl; break;
@@ -95,7 +96,7 @@ void server::die(){
     exit(0);
 }
 
-void server::privmsg(vector<string>& args, chatUser user){
+void server::privmsg(vector<string>& args, chatUser& user){
     string name = args[0];
     args.erase(args.begin());
     string message = "";
@@ -109,6 +110,42 @@ void server::privmsg(vector<string>& args, chatUser user){
     if(server_data.tryGetActiveUser(name)){
         chatUser recipient = server_data.getActiveUser(name);
         recipient.writeToSocket(user.getUsername() +  ": " + message);
+    }
+    
+}
+
+// HANDLES CHAT ROOM MESSAGING
+void server::msg(vector<string>& args, chatUser& user){
+    // extract into util funciton to save lines
+    string name = args[0];
+    args.erase(args.begin());
+    string message = "";
+    for (unsigned int i = 0; i < args.size(); i++){
+        if(i==args.size()-1){
+            message += args[i] + "\n";
+        }else{
+            message += args[i] + " ";
+        }
+    }
+    cout << "[MSG] " << message << endl;
+    //chatRoom room = server_data.getChatRoom(name);
+    //cout << room.getChannelName() << endl;
+    if(server_data.tryGetChatRoom(name)){
+        chatRoom& room = this->server_data.getChatRoom(name);
+        room.sendMessageToChannel(message, user);
+    }
+    
+    
+}
+
+void server::join(vector<string>& args, chatUser& user){
+    string name = args[0];
+    string pwd = args[1];
+
+    //chatRoom room = server_data.getChatRoom(name);
+    if(server_data.tryGetChatRoom(name)){
+        chatRoom& room = this->server_data.getChatRoom(name);
+        room.joinChannel(user, pwd);
     }
     
 }

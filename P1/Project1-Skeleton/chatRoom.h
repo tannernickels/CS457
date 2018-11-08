@@ -1,6 +1,7 @@
 #ifndef CHAT_ROOM_H
 #define CHAT_ROOM_H
 
+#include <map>
 #include <string>
 using std::string;
 using std::to_string;
@@ -19,17 +20,18 @@ class chatRoom{
 
 public:
     chatRoom(string name, string d, string pwd): channel_name(name), description(d), password(pwd) {}
+    chatRoom(){}
 
-    inline void addUser(chatUser user){ users.push_back(user); }
+    inline void addUser(chatUser& user){ users.push_back(user); }
 
     // GETTERS
     inline string getChannelName(){ return this->channel_name; }
     inline string getChannelDecription(){ return this->description; }
     
     // SETTERS
-    inline void changeName(string name) { this->channel_name = name; }
-    inline void changeDescription(string d) { this->description = d; }
-    inline void changePassword(string pwd) { this->password = pwd; }
+    inline void changeName(string& name) { this->channel_name = name; }
+    inline void changeDescription(string& d) { this->description = d; }
+    inline void changePassword(string& pwd) { this->password = pwd; }
 
     //CHAT METHODS
     /*TODO:
@@ -42,8 +44,9 @@ public:
         // /JOIN <channel> <password>
         void joinChannel(chatUser user, string& password)
     */
-
-
+    void joinChannel(chatUser& user, string& password);
+    void sendMessageToChannel(string& message, chatUser& sender);
+    void printChannelData();
 
 
 private:

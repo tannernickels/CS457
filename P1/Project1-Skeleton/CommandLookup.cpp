@@ -14,6 +14,7 @@ void CommandLookup::initializeMap(){
     command_map.insert(make_pair("/knock", KNOCK));
     command_map.insert(make_pair("/list", LIST));
     command_map.insert(make_pair("/mode", MODE));
+    command_map.insert(make_pair("/msg", MSG));
     command_map.insert(make_pair("/nick", NICK));
     command_map.insert(make_pair("/notice", NOTICE));
     command_map.insert(make_pair("/oper", OPER));
