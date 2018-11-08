@@ -10,9 +10,10 @@ fi
 IP=127.0.0.1
 FOREIGN=false
 USER=""
+PWD=""
 DEFAULT_USER=dcdennis
 
-while getopts ":h:u:" option
+while getopts ":h:u:k:" option
 do
     echo ${option}
     case "${option}"
@@ -23,6 +24,9 @@ do
            ;;
        u)  echo "USERNAME FLAG"
           USER=${OPTARG}
+          ;;
+       k)  echo "PASSWORD FLAG"
+          PWD=${OPTARG}
           ;;
       *)  echo "Invalid option"
           ;;
@@ -42,8 +46,10 @@ echo $last
 if [[ ! -z $USER ]]
 then
     echo "Running client as $USER. Connecting to server at $IP"
-    gnome-terminal -- run_foreign $IP $USER
+    echo "$IP $USER $last $PWD"
+    gnome-terminal -- run_foreign $IP $USER $last $PWD
 else
-    echo "Running client as default user: $DEFAULT_USER. Connecting to server at $IP"       
-    gnome-terminal -- run_foreign $IP $DEFAULT_USER
+    echo "Running client as default user: $DEFAULT_USER. Connecting to server at $IP" 
+    echo "$IP $DEFAULT_USER $last $PWD"      
+    gnome-terminal -- run_foreign $IP $DEFAULT_USER $last $PWD 
 fi

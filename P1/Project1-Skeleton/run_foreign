@@ -1,6 +1,6 @@
 #! /bin/bash
 
-if [[ $# -ne 2 ]]
+if [[ $# -ne 4 ]]
 then
 	echo "USAGE $0: takes two arguments:"
 	echo "       > hostname"
@@ -8,6 +8,6 @@ then
 	exit -1
 fi
 
-
-g++ client.cpp -pthread -o a.out && ./a.out -h $1 -u $2 -p 2000
+echo "Run foreign $1 $2 $3 $4"
+./client.out -h $1 -u $2 -p 2000 -t $3 -k $4
 
