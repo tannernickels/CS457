@@ -94,3 +94,12 @@ bool serverData::tryGetChatRoom(string& name){
     if (it == chatRooms.end())return false;
     else return true;
 }
+
+string serverData::getListOfChannels(){
+    string list = "\nCHANNELS OF SERVER: \n";
+    for ( const auto &pair : channels ) {
+        string channel_name = pair.first + "\n";
+        list += channel_name;
+    }
+    return list;
+}

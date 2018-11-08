@@ -22,7 +22,7 @@ class serverData{
 
         string getChannelDescription(string attributes);
         string getChannelPass(string attributes);
-
+        string getListOfChannels(); // returns list of channel names seperated by '\n'
 
         vector<string> getUserData(string& username);
         chatUser& getActiveUser(string& username);

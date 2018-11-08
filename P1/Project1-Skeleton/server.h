@@ -33,6 +33,8 @@ class server{
         void msg(vector<string>& args, chatUser& user);
         void privmsg(vector<string>& args, chatUser& user);
         void join(vector<string>& args, chatUser& user);
+        void list(vector<string>& args, chatUser& user);
+        void userip(vector<string>& args, chatUser& user);
 
     private:
         serverData server_data;

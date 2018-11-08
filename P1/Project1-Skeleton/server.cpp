@@ -12,7 +12,7 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case KICK: std::cout << "execute KICK()" << std::endl; break;
         case KILL: std::cout << "execute KILL()" << std::endl; break;
         case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
-        case LIST: std::cout << "execute LIST()" << std::endl; break;
+        case LIST: std::cout << "execute LIST()" << std::endl; list(args, user); break;
         case MODE: std::cout << "execute MODE()" << std::endl; break;
         case MSG: std::cout << "execute MSG()" << std::endl; msg(args, user); break;
         
@@ -31,7 +31,7 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case TOPIC: std::cout << "execute TOPIC()" << std::endl; break;
         
         case USERHOST: std::cout << "execute USERHOST()" << std::endl; break;
-        case USERIP: std::cout << "execute USERIP()" << std::endl; break;
+        case USERIP: std::cout << "execute USERIP()" << std::endl; userip(args, user); break;
         case USERS: std::cout << "execute USERS()" << std::endl; break;
         case VERSION: std::cout << "execute VERSION()" << std::endl; break;
         case WALLOPS: std::cout << "execute WALLOPS()" << std::endl; break;
@@ -75,7 +75,9 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
                 clientSocket.get()->sendString("authenticated!");
                 clientSocket.get()->sendString(server_data.getBanner()); // send banner
                 chatUser user(uname, clientSocket, id); // create active user
-                user.setLevel(server_data.getUserData(uname)[1]);
+                user.setLevel(server_data.getUserData(uname)[1]); // set level of user
+                string IPV4 = clientSocket.get()->getIP();
+                user.setIP(IPV4); // set IPV4 Address of user
                 server_data.addActiveUser(user);   // update server data
                 return user;
             }
@@ -144,6 +146,13 @@ void server::join(vector<string>& args, chatUser& user){
     
 }
 
+
+void server::list(vector<string>& args, chatUser& user){
+    string list = server_data.getListOfChannels();
+    user.writeToSocket(list);
+}
+
+
 string server::argToString(vector<string>& args){
     string message = "";
     for (unsigned int i = 0; i < args.size(); i++){
@@ -154,4 +163,18 @@ string server::argToString(vector<string>& args){
         }
     }
     return message;
+}
+
+void server::userip(vector<string>& args, chatUser& user){
+    string username = args[0];
+    
+    if(server_data.tryGetActiveUser(username)){
+        chatUser& target = server_data.getActiveUser(username);
+        string targetsIP = target.getIP();
+        user.writeToSocket("IP Address of " + username + ": " + targetsIP);
+    }
+    else{
+        user.writeToSocket(username + " is not online or does not exist");
+    }
+
 }

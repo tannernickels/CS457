@@ -32,6 +32,7 @@ namespace cs457
             ssize_t sendString(const string & data,bool useMutex = true);
             string getUniqueIdentifier();
          
+            inline string getIP(){ return clientAddressIPv4; }
 
         private:
         struct sockaddr_in userAddress; 
