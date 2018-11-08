@@ -84,7 +84,6 @@ void serverData::initializeChatRooms(map<string, string> channels){
         
         chatRoom room(channel_name, channel_description, channel_password);
         chatRooms[channel_name] = room;
-        cRooms.push_back(room);
 
     }
 }
@@ -94,20 +93,4 @@ bool serverData::tryGetChatRoom(string& name){
     cout << "Searching " << &chatRooms << " for chat room at address: " << &(*it) << endl;
     if (it == chatRooms.end())return false;
     else return true;
-}
-
-chatRoom& serverData::getChatRoom(string& name){
-    //map<string, chatRoom>::iterator it = chatRooms.find(name);
-    //cout << "Retrieving from " << &chatRooms << " chat room at address: " << &(*it) << endl;
-    //return it->second;
-    //cout << "Retrieving from " << &chatRooms << " chat room at address: " << &(*chatRooms[name]) << endl;
-    
-    //chatRoom& room = chatRooms.at(name);
-    //return room;
-    for(int i=0; i < cRooms.size(); i++){
-        if(cRooms[i].getChannelName() == name){
-            cout << "FOUND YOUR CHAT ROOM: " << cRooms[i].getChannelName() << " at " << &(cRooms[i]) << endl;
-            return cRooms[i];
-        }
-    }
 }

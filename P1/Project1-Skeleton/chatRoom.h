@@ -23,6 +23,7 @@ public:
     chatRoom(){}
 
     inline void addUser(chatUser& user){ users.push_back(user); }
+    bool isValidUser(chatUser& user);
 
     // GETTERS
     inline string getChannelName(){ return this->channel_name; }
