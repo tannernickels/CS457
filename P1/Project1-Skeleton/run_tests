@@ -1,0 +1,49 @@
+#! /bin/bash
+
+if [[ $# -lt 1 ]]
+then
+    echo "USAGE: $0: invalid arguments"
+    echo "      - $0 -h <host_address> -u <username> <test_file_name> "
+    exit -1
+fi
+
+IP=127.0.0.1
+FOREIGN=false
+USER=""
+DEFAULT_USER=dcdennis
+
+while getopts ":h:u:" option
+do
+    echo ${option}
+    case "${option}"
+    in
+       h)  echo "HOSTNAME FLAG"
+           IP=${OPTARG}
+           FOREIGN=true
+           ;;
+       u)  echo "USERNAME FLAG"
+          USER=${OPTARG}
+          ;;
+      *)  echo "Invalid option"
+          ;;
+    esac
+done
+shift $((OPTIND -1))
+
+echo $USER
+echo "Starting Server...."
+gnome-terminal -- ./run
+sleep 2
+
+for last; do true; done
+echo $last
+
+
+if [[ ! -z $USER ]]
+then
+    echo "Running client as $USER. Connecting to server at $IP"
+    gnome-terminal -- run_foreign $IP $USER
+else
+    echo "Running client as default user: $DEFAULT_USER. Connecting to server at $IP"       
+    gnome-terminal -- run_foreign $IP $DEFAULT_USER
+fi
