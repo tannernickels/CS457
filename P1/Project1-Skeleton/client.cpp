@@ -33,7 +33,7 @@ char msg[1500]; //create a message buffer
 int bytesRead, bytesWritten = 0; // bookkeeping 
 
 bool isRunning = true;
-enum responseType {CHANNEL_MESSAGE, PONG, SERVER_RESPONSE, PRIVMSG};
+enum responseType {BANNER, CHANNEL_MESSAGE, PONG, SERVER_RESPONSE, PRIVMSG};
 
 // Creates client socket and establishes connection to server
 void configureSocketAndServerConnection(char *serverIp, int port){
@@ -70,6 +70,9 @@ responseType getType(string msg){
     else if(msg.substr(0,1) == "<"){
         return PRIVMSG;
     }   
+    else if(msg.substr(0,7) == " _    _"){
+        return BANNER;
+    }
     else{
         return SERVER_RESPONSE;
     }
@@ -85,7 +88,7 @@ void processMessage(){
                 break;
         case CHANNEL_MESSAGE:
         case PRIVMSG:
-                cout << msg << endl; 
+                cout << msg; 
                 break;
         case PONG:
                  cout << "PONG RECEIVED" << endl; 
@@ -137,25 +140,43 @@ void displayBanner(){
 
 // Login Thread Functionality
 void auth(){
-    cout << endl;
-    cout << "LOGIN [" << username << "]" << endl;
+
     bool notAuthenticated = true;
-    /* Send Username to Server */
-    string syn = "-u " + username;
-    memset(&msg, 0, sizeof(msg));//clear the buffer
-    strcpy(msg, syn.c_str());
-    bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
-    memset(&msg, 0, sizeof(msg));//clear the buffer
-    bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-    if(!strcmp(msg, "validUser"))
-    {
-        cout << "ENTER PASSWORD: ";
-    }
-    else if(!strcmp(msg, "invalidUser")){
-        cout << "You are not a registered user!" << endl;
-        isRunning = false;
+    if(username.empty()){
+        string guest_request = "guest";
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        strcpy(msg, guest_request.c_str());
+        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);  
+        cout << msg << endl;
+        displayBanner();
         notAuthenticated = false;
     }
+    else{
+        cout << endl;
+        cout << "LOGIN [" << username << "]" << endl;
+        
+    
+        /* Send Username to Server */
+        string syn = "-u " + username;
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        strcpy(msg, syn.c_str());
+        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+
+        if(!strcmp(msg, "validUser"))
+        {
+            cout << "ENTER PASSWORD: ";
+        }
+        else if(!strcmp(msg, "invalidUser")){
+            cout << "You are not a registered user!" << endl;
+            isRunning = false;
+            notAuthenticated = false;
+        }
+    }
+    
 
     while(notAuthenticated){
         /* password input */
