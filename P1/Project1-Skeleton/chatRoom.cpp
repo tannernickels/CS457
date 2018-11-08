@@ -2,6 +2,9 @@
 
 void chatRoom::joinChannel(chatUser& user, string& password){
     
+    if(password.empty())
+        password = "@";
+
     if(password == this->password){
         addUser(user);
         user.joinChatRoom(this->channel_name);
@@ -12,23 +15,27 @@ void chatRoom::joinChannel(chatUser& user, string& password){
         user.writeToSocket("you entered an invalid password for the channel: " + this-> channel_name);
     }
 
-    printChannelData();
-
 }
 
 void chatRoom::sendMessageToChannel(string& message, chatUser& sender){
+    
     cout << "SENDING MESSAGE TO CHANNEL" << endl;
-    printChannelData();
     string name_of_sender = sender.getUsername();
-    cout << to_string(users.size()) << endl;
-    for(auto& user: users) {
-        //if(user.getUsername() != name_of_sender){
-            cout << this -> getChannelName() << endl;
-            cout << "SENDER " << sender.getUsername() << endl;
-            user.writeToSocket(sender.getUsername()+": "+ message);
-            cout << "RECIPIENT " << user.getUsername() << endl;
-        //}
+    
+    if(isValidUser(sender)){
+        for(auto& user: users) {
+            if(user.getUsername() != name_of_sender){
+                cout << this -> getChannelName() << endl;
+                cout << "SENDER " << sender.getUsername() << endl;
+                user.writeToSocket(sender.getUsername()+": "+ message);
+                cout << "RECIPIENT " << user.getUsername() << endl;
+        }
+        }
     }
+    else{
+        sender.writeToSocket("You are not a member of the channel[ " + this->channel_name + " ]");
+    }
+    
 }
 
 void chatRoom::printChannelData(){
@@ -38,4 +45,16 @@ void chatRoom::printChannelData(){
     for(unsigned int i = 0; i < users.size(); i++){
         cout << users[i].getUsername() << endl;
     }
+}
+
+bool chatRoom::isValidUser(chatUser& sender){
+    
+    string name_of_sender = sender.getUsername();
+
+    for(auto& user: users) {
+        if(name_of_sender == user.getUsername())
+            return true;
+    }
+    return false;
+
 }

@@ -29,9 +29,9 @@ class eventHandler{
         eventHandler(){initializeMap();}
         
         inline Handler getProcessor(Command cmd){ return handler_map[processor_map[cmd]]; }
-        void processTask(string msg, chatUser user, server& s);
-        void processCommand(string msg, chatUser user, server& s);
-        void processMessage(string msg, chatUser user);
+        void processTask(string msg, chatUser& user, server& s);
+        void processCommand(string msg, chatUser& user, server& s);
+        void processMessage(string msg, chatUser& user);
         inline bool isCommand(string msg){ return msg.at(0) == '/'; }
 
     private:

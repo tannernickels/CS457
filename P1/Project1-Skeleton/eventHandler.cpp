@@ -1,7 +1,7 @@
 #include "eventHandler.h"
 
 // HIGHEST-LEVEL OF REQUEST PROCESSING
-void eventHandler::processTask(string msg, chatUser user, server& server){
+void eventHandler::processTask(string msg, chatUser& user, server& server){
  bool type = isCommand(msg);
  switch(type){
      case COMMAND:processCommand(msg, user, server); break;
@@ -12,13 +12,13 @@ void eventHandler::processTask(string msg, chatUser user, server& server){
 
 
 // MESSAGE PROCESSING
-void eventHandler::processMessage(string msg, chatUser user){
+void eventHandler::processMessage(string msg, chatUser& user){
     cout << "message was not a command.." << endl;
-    user.socketPointer().get()->sendString(msg); // relay message back to client to confirm acknowledgement
+    user.writeToSocket(msg); // relay message back to client to confirm acknowledgement
 }
 
 // COMMAND PROCESSING
-void eventHandler::processCommand(string msg, chatUser user, server& server){
+void eventHandler::processCommand(string msg, chatUser& user, server& server){
     
     vector<string> args = cl.parseArguments(msg);
     Command command = cl.getCommand(args);

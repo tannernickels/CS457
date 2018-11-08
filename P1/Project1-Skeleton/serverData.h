@@ -18,7 +18,8 @@ class serverData{
         inline string getBanner(){return this -> banner;}
       
         bool tryGetChatRoom(string& name);
-        chatRoom& getChatRoom(string& name); //{ return chatRooms[name]; }
+        inline chatRoom& getChatRoom(string& name){ return chatRooms[name]; } // call tryGetChatRoom() before calling getChatRoom or new chatRooms will be added.
+
         string getChannelDescription(string attributes);
         string getChannelPass(string attributes);
 
@@ -42,7 +43,6 @@ class serverData{
         string banner;
         map <string, string> channels;
         map <string, chatRoom> chatRooms;
-        vector<chatRoom> cRooms;
 
 
 };

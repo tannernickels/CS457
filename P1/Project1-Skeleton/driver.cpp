@@ -16,12 +16,23 @@
 
 using namespace std;
 
-
-//serverData server_data;
-server server;
-
 //GLOBALS
+server server;
 bool ready = true;
+
+void to_lowercase(string& s){
+    for (int i = 0; i < s.size(); i++){
+        s[i] = tolower(s[i]);
+    }
+}
+
+bool isLeaving(string& msg, int& id){
+    if (msg.substr(0,4) == "exit" || msg.substr(0,5) == "/quit"){ // replace for /QUIT functionality     
+        cout << "[Client " << id << "] exits chat server" << endl;
+        return false;  
+    }
+    else return true;
+}
 
 // HANDLES CLIENT CONNECTIONS
 int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
@@ -39,16 +50,13 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
     while (cont) 
     {
         tie(msg,val) = clientSocket.get()->recvString();
-        if (msg.substr(0,4) == "EXIT"){ // replace for /QUIT functionality
-            
-            cout << "[Client " << id << "] exits chat server" << endl;
-            cont = false; 
-            break;
-        }
+        to_lowercase(msg);
+        cont = isLeaving(msg, id);
+
         cout << "[Client "<< id <<"] " << msg << "     (value return = " << val << ")" << endl;
-        string s =  "[SERVER REPLY] The client is sending message:" + msg  + "\n"; 
+
         eventHandler consumer;
-        thread taskConsumer(&eventHandler::processTask, &consumer, msg, dumbUser, std::ref(server));
+        thread taskConsumer(&eventHandler::processTask, &consumer, msg, std::ref(dumbUser), std::ref(server));
         taskConsumer.join();
 
         cout << "waiting for another message\n" << endl; 

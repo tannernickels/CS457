@@ -1,7 +1,7 @@
 #include "server.h"
 
 
-void server::onEvent(Command cmd, vector<string>& args, chatUser user){
+void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
     switch(cmd){
     
         case CONNECT: std::cout << "execute CONNECT()" << std::endl; break;
@@ -99,17 +99,14 @@ void server::die(){
 void server::privmsg(vector<string>& args, chatUser& user){
     string name = args[0];
     args.erase(args.begin());
-    string message = "";
-    for (unsigned int i = 0; i < args.size(); i++){
-        if(i==args.size()-1){
-            message += args[i] + "\n";
-        }else{
-            message += args[i] + " ";
-        }
-    }
+    string message = argToString(args);
+
     if(server_data.tryGetActiveUser(name)){
         chatUser recipient = server_data.getActiveUser(name);
         recipient.writeToSocket(user.getUsername() +  ": " + message);
+    }
+    else{
+        user.writeToSocket("User[ " + name + " ] is either offline or does not exist");
     }
     
 }
@@ -119,20 +116,15 @@ void server::msg(vector<string>& args, chatUser& user){
     // extract into util funciton to save lines
     string name = args[0];
     args.erase(args.begin());
-    string message = "";
-    for (unsigned int i = 0; i < args.size(); i++){
-        if(i==args.size()-1){
-            message += args[i] + "\n";
-        }else{
-            message += args[i] + " ";
-        }
-    }
+    string message = argToString(args);
     cout << "[MSG] " << message << endl;
-    //chatRoom room = server_data.getChatRoom(name);
-    //cout << room.getChannelName() << endl;
+   
     if(server_data.tryGetChatRoom(name)){
         chatRoom& room = this->server_data.getChatRoom(name);
         room.sendMessageToChannel(message, user);
+    }
+    else{
+        user.writeToSocket("The channel[ " + name + " ] does not exist");
     }
     
     
@@ -141,11 +133,25 @@ void server::msg(vector<string>& args, chatUser& user){
 void server::join(vector<string>& args, chatUser& user){
     string name = args[0];
     string pwd = args[1];
-
-    //chatRoom room = server_data.getChatRoom(name);
+    
     if(server_data.tryGetChatRoom(name)){
         chatRoom& room = this->server_data.getChatRoom(name);
         room.joinChannel(user, pwd);
     }
+    else{
+        user.writeToSocket("The channel[ " + name + " ] does not exist");
+    }
     
+}
+
+string server::argToString(vector<string>& args){
+    string message = "";
+    for (unsigned int i = 0; i < args.size(); i++){
+        if(i==args.size()-1){
+            message += args[i] + "\n";
+        }else{
+            message += args[i] + " ";
+        }
+    }
+    return message;
 }
