@@ -38,6 +38,7 @@ void eventHandler::initializeMap(){
     processor_map.insert(make_pair(DIE, "server"));
     processor_map.insert(make_pair(HELP, "chatUser"));
     processor_map.insert(make_pair(INFO, "chatUser"));
+    processor_map.insert(make_pair(INVALID, "chatUser"));
     processor_map.insert(make_pair(INVITE, "server"));
     processor_map.insert(make_pair(ISON, "server"));
     processor_map.insert(make_pair(JOIN, "server"));

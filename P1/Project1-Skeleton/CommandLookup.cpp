@@ -128,8 +128,10 @@ Command CommandLookup::find(string& command){
 }
 
 Command CommandLookup::getCommand(vector<string>& args){
-    to_lowercase(args[0]);
+    //to_lowercase(args[0]);
     Command c = command_map[args[0]];
+    if(c == 0 && args[0] != "/away")
+        c = INVALID;
     args.erase(args.begin());
     return c;
 }

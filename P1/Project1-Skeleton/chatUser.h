@@ -48,8 +48,9 @@ public:
     void help();
     void info();
     void nick(vector<string>& args);
-    //set username?? 
     void set_name(vector<string>& args);
+    void ping(vector<string>& args);
+    void invalid(vector<string>& args);
 
 private:
 

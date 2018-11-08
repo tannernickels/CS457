@@ -22,6 +22,7 @@ bool ready = true;
 
 void to_lowercase(string& s){
     for (int i = 0; i < s.size(); i++){
+        if(s[i] == ' ') break;
         s[i] = tolower(s[i]);
     }
 }
