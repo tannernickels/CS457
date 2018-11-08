@@ -33,7 +33,7 @@ char msg[1500]; //create a message buffer
 int bytesRead, bytesWritten = 0; // bookkeeping 
 
 bool isRunning = true;
-
+enum responseType {CHANNEL_MESSAGE, PONG, SERVER_RESPONSE, PRIVMSG};
 
 // Creates client socket and establishes connection to server
 void configureSocketAndServerConnection(char *serverIp, int port){
@@ -59,11 +59,46 @@ void configureSocketAndServerConnection(char *serverIp, int port){
         cout << "Connected to the server!" << endl;
 }
 
+// Gets responseType enum from msg -- differentiates messages received for printing reasons
+responseType getType(string msg){
+    if(msg.substr(0,5) == "/PONG"){
+        return PONG;
+    }
+    else if(msg.substr(0,3) == "< #"){
+        return CHANNEL_MESSAGE;
+    }
+    else if(msg.substr(0,1) == "<"){
+        return PRIVMSG;
+    }   
+    else{
+        return SERVER_RESPONSE;
+    }
+}
+
+// Message Handler Thread Functionality
+void processMessage(){
+    string response(msg);
+    responseType type = getType(response);
+    switch(type){
+        case SERVER_RESPONSE:
+                cout << "<Server> " << msg << endl; 
+                break;
+        case CHANNEL_MESSAGE:
+        case PRIVMSG:
+                cout << msg << endl; 
+                break;
+        case PONG:
+                 cout << "PONG RECEIVED" << endl; 
+                 break;
+
+    }
+}
+
 // Sender Thread Functionality
 void outgoing(){
     while(isRunning){
-        sleep(1);
-        cout << username << ">";
+        //sleep(1);
+        //cout << username << ">";
         string data;
         getline(cin, data);
         memset(&msg, 0, sizeof(msg));//clear the buffer
@@ -73,7 +108,7 @@ void outgoing(){
             send(clientSd, (char*)&msg, strlen(msg), 0);
         }
         bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
-        cout << "Awaiting server response..." << endl;
+        //cout << "Awaiting server response..." << endl;
         memset(&msg, 0, sizeof(msg));//clear the buffer
     }
 }
@@ -88,7 +123,8 @@ void incoming(){
             isRunning = false;
         }
         else{
-            cout << "Server: " << msg << endl;
+            thread MessageHandler(&processMessage);
+            MessageHandler.join();
         }
     }
 }

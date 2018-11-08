@@ -25,11 +25,8 @@ void chatRoom::sendMessageToChannel(string& message, chatUser& sender){
     if(isValidUser(sender)){
         for(auto& user: users) {
             if(user.getUsername() != name_of_sender){
-                cout << this -> getChannelName() << endl;
-                cout << "SENDER " << sender.getUsername() << endl;
-                user.writeToSocket(sender.getUsername()+": "+ message);
-                cout << "RECIPIENT " << user.getUsername() << endl;
-        }
+                user.writeToSocket("< #" + this-> channel_name + ":" + sender.getUsername() + " > " + message);
+            }
         }
     }
     else{
