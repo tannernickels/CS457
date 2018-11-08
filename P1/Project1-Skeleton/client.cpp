@@ -18,6 +18,8 @@
 #include <thread>
 #include <mutex>
 #include <vector> 
+#include "FileIO.h"
+
 using namespace std;
 
 //GLOBALS
@@ -27,6 +29,7 @@ int serverPort;
 string configFile;
 string testFile;
 string logFile;
+string pwd;
 
 int clientSd; // global client socket
 char msg[1500]; //create a message buffer 
@@ -179,14 +182,24 @@ void auth(){
     
 
     while(notAuthenticated){
-        /* password input */
-        string data;
-        getline(cin, data);
-        memset(&msg, 0, sizeof(msg));//clear the buffer
-        strcpy(msg, data.c_str());
-        /* Send password to Server */
-        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
-        memset(&msg, 0, sizeof(msg));//clear the buffer
+        if(!pwd.empty()){
+            memset(&msg, 0, sizeof(msg));//clear the buffer
+            strcpy(msg, pwd.c_str());
+            /* Send password to Server */
+            bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+            memset(&msg, 0, sizeof(msg));//clear the buffer
+        }
+        else{
+            /* password input */
+            string data;
+            getline(cin, data);
+            memset(&msg, 0, sizeof(msg));//clear the buffer
+            strcpy(msg, data.c_str());
+            /* Send password to Server */
+            bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+            memset(&msg, 0, sizeof(msg));//clear the buffer
+        }
+        
 
         bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
         if(!strcmp(msg, "authenticated!"))
@@ -206,12 +219,32 @@ void auth(){
     
 }
 
+// Test Thread Functionality
+void runTestFile(){
+    FileIO file(testFile, "r");
+    vector<string> test_commands = file.getEveryLine();
+    for(auto& command: test_commands){
+        cout << "Sending Command " << command << endl;
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        strcpy(msg, command.c_str());
+        sleep(1);
+        bytesWritten += send(clientSd, (char*)&msg, strlen(msg), 0);
+        memset(&msg, 0, sizeof(msg));//clear the buffer
+        if(command.substr(0,4) != "/msg"){
+            bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+            thread MessageHandler(&processMessage);
+            MessageHandler.join();
+        }
+
+    }
+}
+
 int main(int argc, char *argv[])
 {
 
     //parse arguments
     int opt;
-    while((opt = getopt(argc, argv, "h:u:p:c:t:L")) != EOF){
+    while((opt = getopt(argc, argv, "h:u:p:c:t:L:k:")) != EOF){
         switch(opt){
             case 'h': hostname = optarg; cout << "hostname: " << hostname << endl; break;
             case 'u': username = optarg; cout << "username: " << username << endl; break;
@@ -219,6 +252,7 @@ int main(int argc, char *argv[])
             case 'c': configFile = optarg; cout << "config file: " << configFile << endl; break;
             case 't': testFile = optarg; cout << "run test file: " << testFile << endl; break;
             case 'L': logFile = optarg; cout << "log file name: " << logFile << endl; break;
+            case 'k': pwd = optarg; cout << "password: " << pwd << endl; break;
             case '?': fprintf(stderr, "usage is \n -h hostname \n -u username \n -p server port \n -c configuration file \n -t run test file \n -L log_file_name\n"); exit(-1);
             default: cout << endl; abort();
         }
@@ -237,10 +271,18 @@ int main(int argc, char *argv[])
 
     /// Start sender and receiver threads
     vector<unique_ptr<thread>> threadList; 
-    unique_ptr<thread> sender = make_unique<thread>(outgoing);
+    
+     
+
+    if(!testFile.empty()){
+        thread tester(runTestFile);
+        tester.join(); 
+    }
     unique_ptr<thread> receiver = make_unique<thread>(incoming);
+    threadList.push_back(std::move(receiver));
+    unique_ptr<thread> sender = make_unique<thread>(outgoing);
     threadList.push_back(std::move(sender)); 
-    threadList.push_back(std::move(receiver)); 
+    
 
     // BLOCKING CALL until client has "EXIT" process
     while(isRunning){}  

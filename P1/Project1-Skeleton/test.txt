@@ -1,0 +1,9 @@
+/help
+/info
+/list
+/join Wooks hemp
+/msg Wooks Hey buddaaaayyyyyyyy
+/privmsg tnickels devin sucks sooo bad duude :P
+/away I am away
+/away 
+/userip tnickels

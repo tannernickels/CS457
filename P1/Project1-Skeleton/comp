@@ -1,3 +1,7 @@
 #! /bin/bash
 echo "Compiling..."
 g++ -g chatRoom.cpp eventHandler.cpp server.cpp serverData.cpp FileIO.cpp chatUser.cpp CommandLookup.cpp tcpUserSocket.cpp tcpServerSocket.cpp driver.cpp -pthread -o driver.out
+echo "Compiling client..."
+g++ FileIO.cpp client.cpp -pthread -o client.out
+echo 'Finished compiling'
+
