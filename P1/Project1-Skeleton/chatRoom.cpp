@@ -9,7 +9,7 @@ void chatRoom::joinChannel(chatUser& user, string& password){
         addUser(user);
         user.joinChatRoom(this->channel_name);
         cout << user.getUsername() << " joined " << this->channel_name << endl;
-        user.writeToSocket("you have joined the channel: " + this->channel_name);
+        user.writeToSocket("you have joined #" + this->channel_name);
     }
     else{
         user.writeToSocket("you entered an invalid password for the channel: " + this-> channel_name);
