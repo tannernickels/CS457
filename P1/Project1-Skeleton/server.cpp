@@ -20,8 +20,10 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case MSG:   msg(args, user); 
                     break;
         
-        case NOTICE: std::cout << "execute NOTICE()" << std::endl; break;
-        case OPER: std::cout << "execute OPER()" << std::endl; break;
+        case NOTICE:    notice(args, user);
+                        break;
+        case OPER:      oper(args, user);
+                        break;
         case PART: std::cout << "execute PART()" << std::endl; break;
         case PASS: std::cout << "execute PASS()" << std::endl; break;
        
@@ -34,7 +36,8 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case SILENCE: std::cout << "execute SILENCE()" << std::endl; break;
         case TIME:  _time_(user);
                     break;
-        case TOPIC: std::cout << "execute TOPIC()" << std::endl; break;
+        case TOPIC: topic(args, user); 
+                    break;
         
         case USERHOST: std::cout << "execute USERHOST()" << std::endl; break;
         case USERIP:    userip(args, user); 
@@ -211,4 +214,32 @@ void server::_time_(chatUser& user){
     timeinfo = localtime (&rawtime);
     string response = "The current local time and date is " + std::string(asctime(timeinfo)); 
     user.writeToSocket(response);
+}
+
+void server::notice(vector<string>& args, chatUser& user){
+    // command is implemented at privmsg
+    std::cout << "execute NOTICE()" << std::endl;
+    privmsg(args, user);
+}
+
+void server::oper(vector<string>& args, chatUser& user){
+    // According to the commands pdf: OPer attempts to give a user OPER privileges..
+    // Although if you are an operator then you should already have been given those privileges up logging in.
+    // So this command will validate if a user has OPER privilegs or not.  Their level should have been set upon login.
+    std::cout << "execute OPER()" << std::endl;
+    vector<string> data = server_data.getUserData(user.getUsername());
+    if(data[1] == "channelop")
+        user.writeToSocket("You have IRC Operator privileges.");
+    else
+        user.writeToSocket("You are not a IRC Operator");
+}
+
+void server::topic(vector<string>& args, chatUser& user){
+    std::cout << "execute TOPIC()" << std::endl;
+    string channel_name = args[0];
+    string set_topic_to = args[1]; //optional parameter that is used to set the topic for a channel
+    chatRoom& room = server_data.getChatRoom(channel_name);
+    string topic = room.getChannelDescription();
+    user.writeToSocket(topic);
+    //TODO: if args[1] is not empty then we need to change the chatRoom description and update channels.txt.
 }
