@@ -37,6 +37,9 @@ class server{
         void list(vector<string>& args, chatUser& user);
         void userip(vector<string>& args, chatUser& user);
         void _time_(chatUser& user);
+        void notice(vector<string>& args, chatUser& user);
+        void oper(vector<string>& args, chatUser& user);
+        void topic(vector<string>& args, chatUser& user);
 
     private:
         serverData server_data;

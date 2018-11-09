@@ -27,7 +27,7 @@ public:
 
     // GETTERS
     inline string getChannelName(){ return this->channel_name; }
-    inline string getChannelDecription(){ return this->description; }
+    inline string getChannelDescription(){ return this->description; }
     
     // SETTERS
     inline void changeName(string& name) { this->channel_name = name; }

@@ -1,0 +1,8 @@
+/privmsg tnickels Whats up??
+/join Professional-Pottery-Experts Yas
+/join 457
+/privmsg tnickels You're weird
+/msg Professional-Pottery-Experts Wanna mold some clay with me??
+/msg Professional-Pottery-Experts Rad
+/msg 457 wanna work on this project??
+/msg 457 you need to chill..
