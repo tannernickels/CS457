@@ -32,7 +32,8 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case RULES: std::cout << "execute RULES()" << std::endl; break;
         
         case SILENCE: std::cout << "execute SILENCE()" << std::endl; break;
-        case TIME: std::cout << "execute TIME()" << std::endl; break;
+        case TIME:  _time_(user);
+                    break;
         case TOPIC: std::cout << "execute TOPIC()" << std::endl; break;
         
         case USERHOST: std::cout << "execute USERHOST()" << std::endl; break;
@@ -200,4 +201,14 @@ void server::userip(vector<string>& args, chatUser& user){
         user.writeToSocket(username + " is not online or does not exist");
     }
 
+}
+
+void server::_time_(chatUser& user){
+    std::cout << "execute TIME()" << std::endl;
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    string response = "The current local time and date is " + std::string(asctime(timeinfo)); 
+    user.writeToSocket(response);
 }

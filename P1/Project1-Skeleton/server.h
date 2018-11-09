@@ -14,6 +14,7 @@
 #include "chatUser.h"
 #include "FileIO.h"
 #include "serverData.h"
+#include <time.h>  
 
 using namespace std;
 
@@ -35,6 +36,7 @@ class server{
         void join(vector<string>& args, chatUser& user);
         void list(vector<string>& args, chatUser& user);
         void userip(vector<string>& args, chatUser& user);
+        void _time_(chatUser& user);
 
     private:
         serverData server_data;
