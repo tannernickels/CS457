@@ -36,7 +36,7 @@ shift $((OPTIND -1))
 
 echo $USER
 echo "Starting Server...."
-gnome-terminal -- ./run
+gnome-terminal -- ./scripts/run
 sleep 2
 
 for last; do true; done
@@ -47,9 +47,9 @@ if [[ ! -z $USER ]]
 then
     echo "Running client as $USER. Connecting to server at $IP"
     echo "$IP $USER $last $PWD"
-    gnome-terminal -- run_foreign $IP $USER $last $PWD
+    gnome-terminal -- ./scripts/run_foreign $IP $USER $last $PWD
 else
     echo "Running client as default user: $DEFAULT_USER. Connecting to server at $IP" 
     echo "$IP $DEFAULT_USER $last $PWD"      
-    gnome-terminal -- run_foreign $IP $DEFAULT_USER $last $PWD 
+    gnome-terminal -- ./scripts/run_foreign $IP $DEFAULT_USER $last $PWD 
 fi

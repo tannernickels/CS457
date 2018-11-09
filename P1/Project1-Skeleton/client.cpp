@@ -221,6 +221,7 @@ void auth(){
 
 // Test Thread Functionality
 void runTestFile(){
+    cout << "RUNNING TEST FILE: " << testFile << endl;
     FileIO file(testFile, "r");
     vector<string> test_commands = file.getEveryLine();
     for(auto& command: test_commands){
