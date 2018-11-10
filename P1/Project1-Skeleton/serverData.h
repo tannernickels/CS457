@@ -28,6 +28,7 @@ class serverData{
         chatUser& getActiveUser(string& username);
         bool tryGetActiveUser(string& username);
         
+        void notifyActiveUserOfServerShutDown();
 
         //MUTATORS
         inline void addActiveUser(chatUser& user){activeUsers.push_back(user);}

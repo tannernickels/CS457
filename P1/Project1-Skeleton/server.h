@@ -40,6 +40,8 @@ class server{
         void notice(vector<string>& args, chatUser& user);
         void oper(vector<string>& args, chatUser& user);
         void topic(vector<string>& args, chatUser& user);
+        void invite(vector<string>& args, chatUser& user);
+        void kick(vector<string>& args, chatUser& user);
 
     private:
         serverData server_data;
