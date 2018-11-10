@@ -103,3 +103,10 @@ string serverData::getListOfChannels(){
     }
     return list;
 }
+
+void serverData::notifyActiveUserOfServerShutDown(){
+    for(auto& user: this -> activeUsers){
+        user.writeToSocket("goodbye\n");
+        user.socketPointer().get() -> closeSocket(); 
+    }
+}

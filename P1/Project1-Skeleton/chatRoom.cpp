@@ -25,7 +25,7 @@ void chatRoom::sendMessageToChannel(string& message, chatUser& sender){
     if(isValidUser(sender)){
         for(auto& user: users) {
             if(user.getUsername() != name_of_sender){
-                user.writeToSocket("< #" + this-> channel_name + ":" + sender.getUsername() + " > " + message);
+                user.writeToSocket("<#" + this-> channel_name + ":" + sender.getUsername() + "> " + message);
             }
         }
     }

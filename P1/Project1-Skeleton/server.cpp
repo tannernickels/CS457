@@ -7,11 +7,13 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
         case CONNECT: std::cout << "execute CONNECT()" << std::endl; break;
         case DIE:   die(); 
                     break;
-        case INVITE: std::cout << "execute INVITE()" << std::endl; break;
+        case INVITE:    invite(args, user);
+                        break;
         case ISON: std::cout << "execute ISON()" << std::endl; break;
         case JOIN:  join(args, user); 
                     break;
-        case KICK: std::cout << "execute KICK()" << std::endl; break;
+        case KICK:  kick(args, user);
+                    break;
         case KILL: std::cout << "execute KILL()" << std::endl; break;
         case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
         case LIST:  list(args, user); 
@@ -118,7 +120,9 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
 
 void server::die(){
     std::cout << "executing DIE()" << std::endl; 
-    // TODO: send every active user the goodbye string so that they can terminate before the server shuts down
+    thread notifyAll(&serverData::notifyActiveUserOfServerShutDown, &server_data);
+    notifyAll.join();
+    cout << "******** SHUTING DOWN ********" << endl;
     exit(0);
 }
 
@@ -238,8 +242,51 @@ void server::topic(vector<string>& args, chatUser& user){
     std::cout << "execute TOPIC()" << std::endl;
     string channel_name = args[0];
     string set_topic_to = args[1]; //optional parameter that is used to set the topic for a channel
-    chatRoom& room = server_data.getChatRoom(channel_name);
-    string topic = room.getChannelDescription();
-    user.writeToSocket(topic);
+    if(server_data.tryGetChatRoom(channel_name)){
+        chatRoom& room = this->server_data.getChatRoom(channel_name);
+        string topic = room.getChannelDescription();
+        user.writeToSocket(topic);
+    }
+    else{
+        user.writeToSocket("The channel[ " + channel_name + " ] does not exist");
+    }
+    
     //TODO: if args[1] is not empty then we need to change the chatRoom description and update channels.txt.
+}
+
+void server::invite(vector<string>& args, chatUser& user){
+    // INVITE <nickname> <channel>
+    std::cout << "execute INVITE()" << std::endl; 
+    string uname = args[0];
+    string channel = args[1];
+    string message = user.getUsername() + " has invited you to join " + channel;
+
+    if(server_data.tryGetChatRoom(channel)){ // check that the specified chatRoom exists
+        chatRoom& room = this->server_data.getChatRoom(channel);
+        if(room.isValidUser(user)){ // check that user has already joined the channel he is attempting to invite another user to
+            if(server_data.tryGetActiveUser(uname)){ // check that the specified recipient is a valid active user
+                chatUser recipient = server_data.getActiveUser(uname);
+                string pwd = room.getChannelPassword();
+                if(pwd == "@"){
+                    string invitation = message + ", the chat room does not have a password \n";
+                    recipient.writeToSocket(invitation);
+                }
+                else{
+                    string invitation = message + ", the chat room password is " + pwd + "\n";
+                    recipient.writeToSocket(invitation);
+                }
+            }
+            else{
+                user.writeToSocket("User[ " + uname + " ] is either offline or does not exist");
+            }
+        }
+        else user.writeToSocket("Please join the channel before inviting another player to the chat room.");
+    }
+    else{
+        user.writeToSocket("The channel[ " + channel + " ] does not exist");
+    }
+}
+
+void server::kick(vector<string>& args, chatUser& user){
+    std::cout << "execute KICK()" << std::endl;
 }
