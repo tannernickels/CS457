@@ -27,8 +27,10 @@ void to_lowercase(string& s){
     }
 }
 
-bool isLeaving(string& msg, int& id){
-    if (msg.substr(0,4) == "exit" || msg.substr(0,5) == "/quit"){ // replace for /QUIT functionality     
+bool isLeaving(string& msg, int& id, ssize_t val){
+    if(val == -1 || val == 0)
+        return false;
+    else if (msg.substr(0,4) == "exit" || msg.substr(0,5) == "/quit"){ // replace for /QUIT functionality     
         cout << "[Client " << id << "] exits chat server" << endl;
         return false;  
     }
@@ -52,15 +54,16 @@ int cclient(shared_ptr<cs457::tcpUserSocket> clientSocket, int id)
     {
         tie(msg,val) = clientSocket.get()->recvString();
         to_lowercase(msg);
-        cont = isLeaving(msg, id);
+        cont = isLeaving(msg, id, val);
 
         cout << "[Client "<< id <<"] " << msg << "     (value return = " << val << ")" << endl;
-
+        if(!msg.empty() && val != -1 && val != 0){
         eventHandler consumer;
         thread taskConsumer(&eventHandler::processTask, &consumer, msg, std::ref(dumbUser), std::ref(server));
         taskConsumer.join();
 
         cout << "waiting for another message\n" << endl; 
+        }
     }
 
     clientSocket.get()->sendString("goodbye\n"); 

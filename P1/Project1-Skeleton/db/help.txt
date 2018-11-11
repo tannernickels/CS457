@@ -4,22 +4,23 @@ Commands are typed with a forward slash and are case insensitive:
     
 Valid Commands are:
 
-    /AWAY <message>                 - with arguments, away sets the user to "away" mode and sets an away message, displayed when someone attempts to message you.
-                                    - with no arguments, turns off "away" mode
-    /INFO                           - provides information about the server
-    /NICK <nickname>                - allows user to change their nickName
-    /OPER <nickname> <password>     - server validates if that username is a irc operator
-    /NOTICE <username> <message>    - forwards message the specified user
-    /TOPIC <channel>                - server responds with the specified channels description.
-    /JOIN <channel> <password>      - adds the user to the specified channel given that the channel name and password are correct
-    /PRIVMSG <username> <password>  - forwards message the specified user
-    /NICK <nickname>                - updates the users nickname
-    /PING                           - server responds with PONG, validates that connection is still present
-    /TIME                           - server responds with its local time and date
-    /USERIP <username>              - server responds with the IPV4 Address of the specified user
-    /LIST                           - server responds with the list of registerd channels of the server
-    /MSG <channel> <message>        - forwards message the specified channel
-    /SETNAME <username>             - updates name to the requested username
-    /INVITE <username> <channel>    - Server forwards an invitation to the given user for the specified channel.  The recipient of the invitatation will be sent the channels password, if applicable.
-    /DIE                            - murders thy server, please do not kill the irc channel without proper consent
+    /AWAY <message>                     - with arguments, away sets the user to "away" mode and sets an away message, displayed when someone attempts to message you.
+                                        - with no arguments, turns off "away" mode
+    /INFO                               - provides information about the server
+    /NICK <nickname>                    - allows user to change their nickName
+    /OPER <nickname> <password>         - server validates if that username is a irc operator
+    /NOTICE <username> <message>        - forwards message the specified user
+    /TOPIC <channel>                    - server responds with the specified channels description.
+    /JOIN <channel> <password>          - adds the user to the specified channel given that the channel name and password are correct
+    /PRIVMSG <username> <password>      - forwards message the specified user
+    /NICK <nickname>                    - updates the users nickname
+    /PING                               - server responds with PONG, validates that connection is still present
+    /TIME                               - server responds with its local time and date
+    /USERIP <username>                  - server responds with the IPV4 Address of the specified user
+    /LIST                               - server responds with the list of registerd channels of the server
+    /MSG <channel> <message>            - forwards message the specified channel
+    /SETNAME <username>                 - updates name to the requested username
+    /INVITE <username> <channel>        - Server forwards an invitation to the given user for the specified channel.  The recipient of the invitatation will be sent the channels password, if applicable.
+    /KICK <channel> <client> <message>  - channel operators can remove a user from a channel
+    /DIE                                - murders thy server, please do not kill the irc channel without proper consent
 

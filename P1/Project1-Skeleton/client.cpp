@@ -136,9 +136,12 @@ void incoming(){
 }
 
 void displayBanner(){
-    bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
-    cout << msg << endl;
-    cout << endl;
+    while(string(msg).substr(0,7) != " _    _"){
+        bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);
+        cout << msg << endl;
+        cout << endl;
+    }
+    
 }
 
 // Login Thread Functionality
