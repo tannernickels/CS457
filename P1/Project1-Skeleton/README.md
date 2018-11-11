@@ -64,27 +64,27 @@ We also have folder for db, conf, scripts, and tests.
 #### Chat Command Progression
 Command  | Current Functionality
 ------------- | -------------
-  /AWAY <message>              |       With arguments, away sets the user to "away" mode and sets an away message, displayed when someone attempts to message you. With no arguments, turns off "away" mode.
-    /INFO                       |        Provides information about the server.
-    /NICK <nickname>             |       Allows user to change their nickName.
-    /OPER <nickname> <password>       | Server validates if that username is a irc operator. User privileges are set upon startup and currently cannot be changed.
-    /NOTICE <username> <message>   |     Forwards message the specified user.  
-    /TOPIC <channel>                |    Server responds with the specified channels description.
-    /JOIN <channel> <password>      |    Adds the user to the specified channel given that the channel name and password are correct. Some channels require no paswords.
-    /PRIVMSG <username> <password>  |    Forwards message the specified user.
-    /NICK <nickname>                |    Updates the users nickname.
-    /PING                            |   Server responds with PONG which validates that the connection is still present.  We will eventually implement a system that calculates the latency between the client and server. 
-    /TIME                            |   Server responds with its local time and date.
-    /USERIP <username>               |   Server responds with the IPV4 Address of the specified user.
-    /LIST                            |   Server responds with the list of registerd channels of the server.
-    /MSG <channel> <message>         |   Forwards message the specified channel.
-    /SETNAME <username>              |    Updates uesrname of the requested user.
-    /INVITE <username> <channel>      |    Server forwards an invitation to the given user for the specified channel.  The recipient of the invitatation will be sent the channels password, if applicable.
-    /KICK <channel> <client> <message>     | Channel operators can remove a user from a channel. 
-    /KILL <client> <comment>            |  Forcibly removes <client> from the network. This command may only be issued by IRC operators. Defined in RFC.
-    /KNOCK <channel> [<message>]     |    Sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite.
-    /QUIT | Disconnects the client from the server.
-    /DIE                               |    Shuts down each client that is connected to the server and finally terminates the server.
+/AWAY <message>              |       With arguments, away sets the user to "away" mode and sets an away message, displayed when someone attempts to message you. With no arguments, turns off "away" mode.
+/INFO                       |        Provides information about the server.
+/NICK <nickname>             |       Allows user to change their nickName.
+/OPER <nickname> <password>       | Server validates if that username is a irc operator. User privileges are set upon startup and currently cannot be changed.
+/NOTICE <username> <message>   |     Forwards message the specified user.  
+/TOPIC <channel>                |    Server responds with the specified channels description.
+/JOIN <channel> <password>      |    Adds the user to the specified channel given that the channel name and password are correct. Some channels require no paswords.
+/PRIVMSG <username> <password>  |    Forwards message the specified user.
+/NICK <nickname>                |    Updates the users nickname.
+/PING                            |   Server responds with PONG which validates that the connection is still present.  We will eventually implement a system that calculates the latency between the client and server. 
+/TIME                            |   Server responds with its local time and date.
+/USERIP <username>               |   Server responds with the IPV4 Address of the specified user.
+/LIST                            |   Server responds with the list of registerd channels of the server.
+/MSG <channel> <message>         |   Forwards message the specified channel.
+/SETNAME <username>              |    Updates uesrname of the requested user.
+/INVITE <username> <channel>      |    Server forwards an invitation to the given user for the specified channel.  The recipient of the invitatation will be sent the channels password, if applicable.
+/KICK <channel> <client> <message>     | Channel operators can remove a user from a channel. 
+/KILL <client> <comment>            |  Forcibly removes <client> from the network. This command may only be issued by IRC operators. Defined in RFC.
+/KNOCK <channel> [<message>]     |    Sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite.
+/QUIT | Disconnects the client from the server.
+/DIE                               |    Shuts down each client that is connected to the server and finally terminates the server.
 
 Each command has its respective error/case handling. 
 For example if a user attempts to KICK another user from a channel then the following must be true:
