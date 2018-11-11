@@ -110,3 +110,10 @@ void serverData::notifyActiveUserOfServerShutDown(){
         user.socketPointer().get() -> closeSocket(); 
     }
 }
+
+void serverData::listOnlineUsers(){
+    cout << "Online Users: " << endl;
+    for(auto& user: activeUsers){
+        cout << user.getUsername() << endl;
+    }
+}

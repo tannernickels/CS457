@@ -22,5 +22,7 @@ Valid Commands are:
     /SETNAME <username>                 - updates name to the requested username
     /INVITE <username> <channel>        - Server forwards an invitation to the given user for the specified channel.  The recipient of the invitatation will be sent the channels password, if applicable.
     /KICK <channel> <client> <message>  - channel operators can remove a user from a channel
+    /KILL <client> <comment>            - forcibly removes <client> from the network. [13] is command may only be issued by IRC operators. Defined in RFC
+    /KNOCK <channel> [<message>]        - sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite
     /DIE                                - murders thy server, please do not kill the irc channel without proper consent
 

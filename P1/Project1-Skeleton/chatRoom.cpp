@@ -17,12 +17,12 @@ void chatRoom::joinChannel(chatUser& user, string& password){
 
 }
 
-void chatRoom::sendMessageToChannel(string& message, chatUser& sender){
+void chatRoom::sendMessageToChannel(string& message, chatUser& sender, bool isKnock){
     
     cout << "SENDING MESSAGE TO CHANNEL" << endl;
     string name_of_sender = sender.getUsername();
     
-    if(isValidUser(sender)){
+    if(isValidUser(sender) || isKnock == true){
         for(auto& user: users) {
             if(user.getUsername() != name_of_sender){
                 user.writeToSocket("<#" + this-> channel_name + ":" + sender.getUsername() + "> " + message);

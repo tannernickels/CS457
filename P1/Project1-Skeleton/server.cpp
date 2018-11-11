@@ -16,7 +16,8 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
                     break;
         case KILL:  kill(args, user);
                     break;
-        case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
+        case KNOCK: knock(args, user); 
+                    break;
         case LIST:  list(args, user); 
                     break;
         case MODE: std::cout << "execute MODE()" << std::endl; break;
@@ -153,7 +154,7 @@ void server::msg(vector<string>& args, chatUser& user){
    
     if(server_data.tryGetChatRoom(name)){
         chatRoom& room = this->server_data.getChatRoom(name);
-        room.sendMessageToChannel(message, user);
+        room.sendMessageToChannel(message, user, false);
     }
     else{
         user.writeToSocket("The channel[ " + name + " ] does not exist");
@@ -268,14 +269,19 @@ void server::invite(vector<string>& args, chatUser& user){
         if(room.isValidUser(user)){ // check that user has already joined the channel he is attempting to invite another user to
             if(server_data.tryGetActiveUser(uname)){ // check that the specified recipient is a valid active user
                 chatUser recipient = server_data.getActiveUser(uname);
-                string pwd = room.getChannelPassword();
-                if(pwd == "@"){
-                    string invitation = message + ", the chat room does not have a password \n";
-                    recipient.writeToSocket(invitation);
+                if(room.isValidUser(recipient)){
+                    user.writeToSocket(uname + " has already joined #" + channel);
                 }
                 else{
-                    string invitation = message + ", the chat room password is " + pwd + "\n";
-                    recipient.writeToSocket(invitation);
+                    string pwd = room.getChannelPassword();
+                    if(pwd == "@"){
+                        string invitation = message + ", the chat room does not have a password \n";
+                        recipient.writeToSocket(invitation);
+                    }
+                    else{
+                        string invitation = message + ", the chat room password is " + pwd + "\n";
+                        recipient.writeToSocket(invitation);
+                    }
                 }
             }
             else{
@@ -366,5 +372,23 @@ void server::kill(vector<string>& args, chatUser& user){
         
     }
     
+
+}
+
+void server::knock(vector<string>& args, chatUser& user){
+    std::cout << "execute KNOCK()" << std::endl;
+    //KNOCK <channel> [<message>] -> Sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite
+    string channel_name = args[0];
+    args.erase(args.begin());
+    string message = argToString(args);
+
+    if(server_data.tryGetChatRoom(channel_name)){
+        chatRoom& room = this->server_data.getChatRoom(channel_name);
+        string respones = string(user.getUsername()) + " has requested an invite to #" + string(room.getChannelName()) + "\n<" + string(user.getUsername()) + "> " + message;
+        room.sendMessageToChannel(respones, user, true);
+    }
+    else{
+        user.writeToSocket("The channel[ " + channel_name + " ] does not exist");
+    }
 
 }
