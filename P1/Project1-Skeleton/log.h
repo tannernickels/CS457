@@ -7,3 +7,5 @@ using std::cout;
 using std::endl;
 
 void log_message(String& message, String& file);
+
+#endif
