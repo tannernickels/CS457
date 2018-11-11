@@ -38,7 +38,7 @@ public:
 
     //CHAT METHODS
     void joinChannel(chatUser& user, string& password);
-    void sendMessageToChannel(string& message, chatUser& sender);
+    void sendMessageToChannel(string& message, chatUser& sender, bool isKnock);
     void printChannelData();
 
 

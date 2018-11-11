@@ -1,4 +1,5 @@
 name description password
 457 irc-programmers @
+basketball NBA 23
 Wooks hippies hemp
 Professional-Pottery-Experts WeLoveClayAikin Yas

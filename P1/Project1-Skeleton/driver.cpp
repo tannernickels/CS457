@@ -5,6 +5,7 @@
 #include <vector> 
 #include <memory> 
 #include <future>
+#include <stdio.h>
 #include "tcpUserSocket.h"
 #include "tcpServerSocket.h"
 #include "CommandLookup.h"
@@ -19,6 +20,7 @@ using namespace std;
 //GLOBALS
 server server;
 bool ready = true;
+char s_in[1500];
 
 void to_lowercase(string& s){
     for (int i = 0; i < s.size(); i++){
@@ -79,6 +81,12 @@ void startShell(){
         string data;
         getline(cin, data);
         cout << "[Server] " << data << endl;
+        // TODO: add more shell functionality
+        if(data == "USERS")
+        {
+            server.listOnlineUsers();
+        }
+    
     }
 }
 
