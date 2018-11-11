@@ -14,7 +14,8 @@ void server::onEvent(Command cmd, vector<string>& args, chatUser& user){
                     break;
         case KICK:  kick(args, user);
                     break;
-        case KILL: std::cout << "execute KILL()" << std::endl; break;
+        case KILL:  kill(args, user);
+                    break;
         case KNOCK: std::cout << "execute KNOCK()" << std::endl; break;
         case LIST:  list(args, user); 
                     break;
@@ -141,8 +142,9 @@ void server::privmsg(vector<string>& args, chatUser& user){
     
 }
 
-// HANDLES CHAT ROOM MESSAGING
+
 void server::msg(vector<string>& args, chatUser& user){
+    // HANDLES CHAT ROOM MESSAGING
     std::cout << "execute MSG()" << std::endl; 
     string name = args[0];
     args.erase(args.begin());
@@ -289,4 +291,80 @@ void server::invite(vector<string>& args, chatUser& user){
 
 void server::kick(vector<string>& args, chatUser& user){
     std::cout << "execute KICK()" << std::endl;
+    bool authenticated = false;
+    // this command can only be issued by a channel operator
+    Level privilege =  user.getLevel();  
+    switch(privilege){
+        case CHANNELOP: authenticated = true; break;
+        default: user.writeToSocket("You do no have operator privileges to kick another user from the chat"); break;
+    }
+    if(authenticated){
+        // KICK <channel> <client> [<message>]
+        string channel = args[0];
+        string uname = args[1];
+        args.erase(args.begin()); args.erase(args.begin()); // remove channel and uname -> toString message args
+        string message = argToString(args);
+        if(server_data.tryGetChatRoom(channel)){ // check that the specified chatRoom exists
+            chatRoom& room = this->server_data.getChatRoom(channel);
+            if(room.isValidUser(user)){ // check that user has already joined the channel he is attempting to kcik another user to
+                if(server_data.tryGetActiveUser(uname)){ // check that the specified recipient is a valid active user
+                    chatUser recipient = server_data.getActiveUser(uname);
+                    if(room.isValidUser(recipient)){ // check that the recipient is in the specified channel
+                        room.removeUser(recipient); 
+                        recipient.writeToSocket("You have been removed from #" + room.getChannelName());
+                        if(!message.empty()) // send user the message if valid
+                            recipient.writeToSocket("<" + user.getUsername() + "> " + message);
+                    }
+                    else{
+                        user.writeToSocket("User[ " + uname + " ] is not in the channel");
+                    }
+                }
+                else{
+                    user.writeToSocket("User[ " + uname + " ] is either offline or does not exist");
+                }
+            }
+            else user.writeToSocket("Please join the channel before attempting to kick another player from a chat room.");
+        }
+        else{
+            user.writeToSocket("The channel[ " + channel + " ] does not exist");
+        }
+
+    }
+}
+
+void server::kill(vector<string>& args, chatUser& user){
+    std::cout << "execute KILL()" << std::endl;
+    // KILL <client> <comment> : Forcibly removes <client> from the network. [13] is command may only be issued by IRC operators. Defined in RFC
+    string uname = args[0];
+    args.erase(args.begin()); // remove client
+    string comment = argToString(args);
+
+    bool authenticated = false;
+    // this command can only be issued by a channel operator
+    Level privilege =  user.getLevel();  
+    switch(privilege){
+        case CHANNELOP: authenticated = true; break;
+        default: user.writeToSocket("You do no have operator privileges to kick another user from the chat"); break;
+    }
+    if(authenticated){
+        if(server_data.tryGetActiveUser(uname)){ // check that the specified recipient is a valid active user
+            chatUser recipient = server_data.getActiveUser(uname);
+            recipient.writeToSocket(user.getUsername() + " has removed you from the server"); //notify user 
+            recipient.writeToSocket("<" + user.getUsername() + "> " + comment); //send comment
+            sleep(1);
+            recipient.writeToSocket("GOODBYE EVERYONE"); // remove client
+            sleep(2);
+            recipient.socketPointer().get()->closeSocket();  // close socket
+            this -> removeActiveUser(uname); // clean up server data
+            
+        }   
+        else{
+            user.writeToSocket("User[ " + uname + " ] is either offline or does not exist");
+        }
+    }
+    else{
+        
+    }
+    
+
 }

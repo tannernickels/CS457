@@ -36,6 +36,7 @@ public:
     inline shared_ptr<cs457::tcpUserSocket> socketPointer(){ return this -> connection;}
     inline string& getUsername(){return this -> username;}
     inline string& getIP(){ return this -> ip; }
+    inline Level getLevel(){ return this -> level; }
 
     // MUTATORS
     void setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket);

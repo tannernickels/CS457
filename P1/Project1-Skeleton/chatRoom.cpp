@@ -55,3 +55,11 @@ bool chatRoom::isValidUser(chatUser& sender){
     return false;
 
 }
+
+void chatRoom::removeUser(chatUser& user){
+    string userToRemove = user.getUsername();
+    for(int i=0; i < this -> users.size(); i++){
+        if(this -> users[i].getUsername() == userToRemove)
+            this -> users.erase(users.begin() + i);
+    }
+}

@@ -5,16 +5,16 @@ void chatUser::setSocket(shared_ptr<cs457::tcpUserSocket> clientSocket){
 }
 
 void chatUser::setLevel(string& level){
-    Level l;
     if(level=="user"){
-        l = SLUGS;
+        this -> level = SLUGS;
     }else if(level=="channelop"){
-        l = CHANNELOP;
+        this -> level = CHANNELOP;
     }else if(level=="sysop"){
-        l = SYSOP;
+        this -> level = SYSOP;
     }else if(level=="admin"){
-        l = ADMIN;
+        this -> level = ADMIN;
     }else{
+        cout << "user has invalid privilege tag" << endl;
         return;
     }
 }
