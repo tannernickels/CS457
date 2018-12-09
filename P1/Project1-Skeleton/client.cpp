@@ -156,7 +156,7 @@ void auth(){
         memset(&msg, 0, sizeof(msg));//clear the buffer
         bytesRead += recv(clientSd, (char*)&msg, sizeof(msg), 0);  
         cout << msg << endl;
-        displayBanner();
+        //displayBanner();
         notAuthenticated = false;
     }
     else{

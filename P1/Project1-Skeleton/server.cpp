@@ -70,9 +70,9 @@ chatUser server::authenticateUser(shared_ptr<cs457::tcpUserSocket> clientSocket,
         tie(msg,val) = clientSocket.get()->recvString();
         if(msg == "guest"){ // process guest request
             cout << "Logging in new guest to irc server" << endl;
-            string guest_response = "You are Guest-" + std::to_string(id) + "!";
-            clientSocket.get()->sendString(guest_response);
-            clientSocket.get()->sendString(server_data.getBanner()); // send banner
+            ///string guest_response = "You are Guest-" + std::to_string(id) + "!";
+            ///clientSocket.get()->sendString(guest_response);
+            ///clientSocket.get()->sendString(server_data.getBanner()); // send banner
             string guest_username = "Guest-" + std::to_string(id);
             chatUser guest(guest_username, clientSocket, id); // create active user
             string lvl = "user";
