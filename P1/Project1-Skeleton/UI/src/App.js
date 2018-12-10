@@ -7,7 +7,7 @@ import {  Button, ButtonGroup, InputGroupAddon, InputGroup, Input,
 import classnames from 'classnames';
 import Messages from "./Messages";
 import MessageTable from './HashTable';
-
+import LoginModal from './Login.js';
 
 function randomName() {
   const adjectives = ["autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless"];
@@ -23,17 +23,22 @@ function randomColor() {
 
 
 
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      name : 'Guest',
+      buttonLabel: 'connect',
       activeTable: 'server',
-      client_id: '',
+      client_id: 'disconnected',
       data: null,
       tabs: {'tab-1': '1'},
       tabsList: ['server'],
-      activeTab: '-1',
+      activeTab: 'server',
       messagesTable: new MessageTable(10),
       messages: [],
       user: {
@@ -55,6 +60,10 @@ class App extends Component {
     this.clearMessages = this.clearMessages.bind(this);
     this.getReceiverID = this.getReceiverID.bind(this);
     this.processMail = this.processMail.bind(this);
+    this.signinGuest = this.signinGuest.bind(this);
+    this.disconnect = this.disconnect.bind(this);
+    this.signinUser = this.signinUser.bind(this);
+    this.callBackendAPI_User = this.callBackendAPI_User.bind(this);
   }
   componentWillMount(){
     var table = this.state.messagesTable;
@@ -62,13 +71,102 @@ class App extends Component {
     this.setState({messagesTable: table});
   }
   componentDidMount() {
-    this.setState({client_id: document.location.host});
+    
     // Call our fetch function below once the component mounts
+    //this.callBackendAPI()
+     // .then(res => this.setState({ data: res.express }))
+     // .catch(err => console.log(err));
+    // initiate continuous calls to clients mail box
+    //this.getMail();
+  }
+
+  signinGuest(){
+    this.setState({client_id: document.location.host+ ':' + this.state.name});
+    sleep(500).then(() => {
     this.callBackendAPI()
       .then(res => this.setState({ data: res.express }))
       .catch(err => console.log(err));
     // initiate continuous calls to clients mail box
     this.getMail();
+    });
+    this.setState({buttonLabel: 'disconnect'});
+  }
+
+  signinUser(username, password){
+    this.setState({name: username, client_id: document.location.host+ ':' + username});
+    sleep(500).then(() => {
+      this.callBackendAPI_User(username, password)
+        .then(res => this.setState({ data: res.express }))
+        .catch(err => console.log(err));
+      // initiate continuous calls to clients mail box
+      this.getMail();
+      });
+      this.setState({buttonLabel: 'disconnect'});
+  }
+
+  callBackendAPI_User = async (username, password) => {
+    const response = await fetch('http://localhost:57000/express_backend_user', {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        headers: {
+            "Content-Type": "text/plain"
+        },
+        body: this.state.client_id + '~' + username + "~" + password, // body data type must match "Content-Type" header
+    });
+    const body = await response.json();
+
+    if (response.status !== 200) {
+      throw Error(body.message) 
+    }
+    return body;
+    
+  }
+
+  async disconnect(){
+    this.setState({client_id: 'disconnected', buttonLabel: 'connect'});
+    var table = this.state.messagesTable;
+    var messages = table.get(this.state.activeTable);
+
+    messages.push({
+      text: document.getElementById('msg-input').value,
+      member: this.state.user
+    });
+    table.insert(this.state.activeTable, messages);
+    this.setState({messagesTable: table});
+
+    console.log(this.state.client_id);
+    const body_data = {id: this.state.client_id}
+    const response = await fetch('http://localhost:57000/message', {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        headers: {
+            "Content-Type": "text/plain"
+            // "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: this.state.client_id + '~' + "/quit"// body data type must match "Content-Type" header
+    });
+    const res = await response.json();
+    //alert(await res.express);
+    if(res.express != "null"){
+      var table = this.state.messagesTable;
+      var message_list = table.get(this.state.activeTable);
+      
+        for(var i=0; i < res.express.split('~').length; i++){ 
+          message_list.push({
+            text: res.express.split('~')[i],
+            member: this.state.server
+          });
+          
+        }
+        //this.setState({messages: message_list});
+        var updateTable = this.state.messagesTable;
+        updateTable.insert(this.state.activeTable, message_list);
+      
+        this.setState({messagesTable: updateTable})
+        
+      }
+
+    //this.clearMessages();
   }
 
   toggle(tab) {
@@ -89,18 +187,44 @@ class App extends Component {
 
 
   async sendMessage(){
-    var table = this.state.messagesTable;
-    var messages = table.get(this.state.activeTable);
-
-    messages.push({
-      text: document.getElementById('msg-input').value,
-      member: this.state.user
-    });
-    table.insert(this.state.activeTable, messages);
-    this.setState({messagesTable: table});
+   
+    if(this.state.client_id === "disconnected"){
+      var table = this.state.messagesTable;
+      var messages = table.get(this.state.activeTable);
+      messages.push({
+        text: document.getElementById('msg-input').value,
+        member: this.state.user
+      });
+      messages.push({
+        text: "You are disconnected, please connect.",
+        member: this.state.server
+      });
+      table.insert(this.state.activeTable, messages);
+      this.setState({messagesTable: table});
+    }
+    else{
+      var table = this.state.messagesTable;
+      var messages = table.get(this.state.activeTable);
+      var bubble_message = document.getElementById('msg-input').value;
+      
+      messages.push({
+        text: document.getElementById('msg-input').value,
+        member: this.state.user
+      });
+      table.insert(this.state.activeTable, messages);
+      this.setState({messagesTable: table});
 
     console.log(this.state.client_id);
     const body_data = {id: this.state.client_id}
+    if(this.state.activeTab != 'server' && this.state.activeTab.charAt(0) == '#'){
+      
+      bubble_message = "/msg " + this.state.activeTab.slice(1,this.state.activeTab.length) +' '+ bubble_message;   
+    }
+    if(this.state.activeTab != 'server' && this.state.activeTab.charAt(0) != '#'){
+      
+      bubble_message = "/privmsg " + this.state.activeTab + ' '+ bubble_message;   
+    }
+
     const response = await fetch('http://localhost:57000/message', {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, cors, *same-origin
@@ -108,7 +232,7 @@ class App extends Component {
             "Content-Type": "text/plain"
             // "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: this.state.client_id + '~' + document.getElementById('msg-input').value // body data type must match "Content-Type" header
+        body: this.state.client_id + '~' + bubble_message // body data type must match "Content-Type" header
     });
     const res = await response.json();
     //alert(await res.express);
@@ -131,6 +255,7 @@ class App extends Component {
         
       }
     }
+    }
   
 
   // Fetches our POST route from the Express server. (Note the route we are fetching matches the POST route from server.js
@@ -141,7 +266,7 @@ class App extends Component {
         headers: {
             "Content-Type": "text/plain"
         },
-        body: document.location.host, // body data type must match "Content-Type" header
+        body: this.state.client_id, // body data type must match "Content-Type" header
     });
     const body = await response.json();
 
@@ -216,7 +341,7 @@ class App extends Component {
         });
       
         table.insert(id, messages);
-        this.setState({messagesTable: table}); // add message
+        this.setState({messagesTable: table, activeTab: id}); // add message
         var tabList = this.state.tabsList;
        
         if(!tabList.includes(id)){
@@ -266,6 +391,7 @@ class App extends Component {
   }
   
   render() {
+   
     return (
       
       <div className="App">
@@ -273,6 +399,7 @@ class App extends Component {
         <section className="chat-ui">
           <div className="chat-header">
           <h1>IRC Chat App</h1>
+          <LoginModal buttonLabel={this.state.buttonLabel} className='Auth'  guest_sign_in ={this.signinGuest} disconnect={this.disconnect} user_sign_in={this.signinUser} />
           {this.renderTabs()}
           </div>
           <div className="chat-messages">
@@ -283,9 +410,9 @@ class App extends Component {
         <div className="chat-input">
             <InputGroup>
               <InputGroupAddon addonType="prepend">
-                <Button type="submit" color="primary" onClick={() => this.sendMessage()} >Send</Button>
+                <Button type="submit" color="primary" id="btnSearch" onClick={() => this.sendMessage()} >Send</Button>
               </InputGroupAddon>
-              <Input id="msg-input"/>
+              <Input id="msg-input" />
               <InputGroupAddon addonType="prepend">
                 <Button color="primary" onClick={() => this.clearMessages()} >Clear Chat</Button>
               </InputGroupAddon>
