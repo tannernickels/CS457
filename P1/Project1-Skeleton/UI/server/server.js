@@ -15,7 +15,7 @@ const table = new Table(100); // table holds host:client key-value pairs for tcp
 const inbox = new Table(100); // inbox holds server echo responses: app.post(/message)
 const mail = new Table(100);  // mail holds privmsg and channel msgs: app.get(/mail)
 
-// create a POST route for initiating client connections
+// create a POST route for initiating guest client connections
 app.post('/express_backend', (req, res) => {
 
     console.log("key: " + req.body);
@@ -95,4 +95,64 @@ app.post('/mail', (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   mail.insert(client_id, null); // clear inbox
   return res.send({ messages: String(unread_mail) });
+});
+
+
+// create a POST route for initiating user client connections
+app.post('/express_backend_user', (req, res) => {
+
+  console.log("key: " + req.body);
+  var props = req.body.split('~');
+  var host = props[0];
+  var username = props[1];
+  var password = props[2];
+  var id = host;
+  
+
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send({ express: 'EXPRESS BACKEND IS CONNECTED' });
+
+  /* tcp client written in node.js -- reference: http://www.hacksparrow.com/tcp-socket-programming-in-node-js.html.) */
+  var net = require('net');
+
+  var client = new net.Socket();
+  /*  to client-table */
+  table.insert(id, client);
+
+  client.connect(2000, '127.0.0.1', function() {
+    console.log('Connected');
+    client.write('-u ' + username); // authenticate user on irc server
+    sleep(500).then(() => {
+      client.write(password);
+    })
+    
+
+  });
+  
+  client.on('data', function(data) {
+    console.log('Received: ' + data);
+    if(String(data).charAt(0) == '<'){
+      // received a privmsg or channel msg
+      var currentMessages = mail.get(req.body);
+      var appendedMessages = currentMessages + '~' + data;
+      mail.insert(id, appendedMessages);
+      
+    }
+    else if(inbox.get(req.body) == null){
+      // inbox is empty -- add server echo response for client
+      inbox.insert(id, data);
+    }
+    else{
+      // if a message in the inbox already exists then append the new message. messages are delimeted by ~
+      var currentMessage = inbox.get(req.body);
+      var appendedMessage = currentMessage + '~' + data;
+      inbox.insert(id, appendedMessage)
+    }
+    //client.destroy(); // kill client after server's response
+  });
+  
+  client.on('close', function() {
+    console.log('Connection closed');
+  });
 });
